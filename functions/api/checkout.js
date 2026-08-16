@@ -13,14 +13,17 @@ const PRICES = {
     4: 'price_1U5AY74D2CG0L4S6d7U97sDw', // 3D Printed Tiger $40
   },
   live: {
-    // TODO: fill after live products/prices are created
+    1: 'price_1U5B5s4D2CG0L4S694fKOuqH', // Low-Poly Batman Bust $45
+    2: 'price_1U5B5s4D2CG0L4S6x91YNT2H', // Articulated Flexi Dragon $38
+    3: 'price_1U5B5t4D2CG0L4S6QJgGu8lY', // 3D Printed Wolf $36
+    4: 'price_1U5B5u4D2CG0L4S6OpVSeoq7', // 3D Printed Tiger $40
   },
 };
 
 export async function onRequestPost(context) {
   const { request, env } = context;
 
-  const mode = (env.STRIPE_MODE || 'test').toLowerCase();
+  const mode = (env.STRIPE_MODE || 'live').toLowerCase();
   const secretKey = mode === 'live' ? env.STRIPE_LIVE_SECRET_KEY : env.STRIPE_TEST_SECRET_KEY;
   if (!secretKey) {
     return json({ error: 'Stripe secret key not configured on server.' }, 500);
