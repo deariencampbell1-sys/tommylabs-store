@@ -13,6 +13,19 @@ function check(name, ok, detail = '') {
   console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${detail ? '  — ' + detail : ''}`);
 }
 
+// ---------------- MANIFEST + ICONS ----------------
+console.log('== MANIFEST & ICONS ==');
+const mres = await fetch(URL + '/manifest.webmanifest');
+const manifest = await mres.json();
+check('manifest name is Tommy Labs', manifest.name === 'Tommy Labs', manifest.name);
+const iconSrcs = (manifest.icons || []).map(i => i.src);
+check('manifest has 192/512/maskable icons', iconSrcs.includes('/icon-192.png') && iconSrcs.includes('/icon-512.png') && iconSrcs.includes('/icon-maskable-512.png'));
+for (const p of ['/icon-192.png', '/icon-512.png', '/icon-maskable-512.png', '/apple-touch-icon.png']) {
+  const r = await fetch(URL + p);
+  const ct = r.headers.get('content-type') || '';
+  check(p + ' served as PNG', r.ok && ct.includes('image/png'), `${r.status} ${ct}`);
+}
+
 const browser = await chromium.launch();
 
 // ---------------- DESKTOP ----------------
@@ -67,6 +80,7 @@ await dp.mouse.click(dbox.x + dbox.w / 2, dbox.y + dbox.h / 2);
 await dp.waitForTimeout(1200);
 const dopen = await dp.evaluate(() => document.getElementById('viewerModal').classList.contains('open'));
 check('clicking the picture opens the 3D viewer on desktop', dopen);
+check('no install pop-up on desktop', await dp.evaluate(() => !document.getElementById('installDialog').classList.contains('show')));
 await desk.close();
 
 // ---------------- PHONE ----------------
@@ -105,6 +119,20 @@ check('install pill hidden until prompt on phone', mobState.pillDisplay === 'non
 check('service worker registered on phone', mobState.swCount === 1, `registrations=${mobState.swCount}`);
 check('app bottom padding on phone', mobState.bodyPad === '86px', `padding=${mobState.bodyPad}`);
 
+// Phone pop-up (iOS UA here -> Add to Home Screen teaching variant)
+const dlg = await mp.evaluate(() => ({
+  shown: document.getElementById('installDialog').classList.contains('show'),
+  body: document.getElementById('installDialogBody').textContent,
+  btn: document.getElementById('appInstallBtn').textContent,
+}));
+check('install pop-up shows on phone', dlg.shown);
+check('pop-up says this is an app', /this page is an app/i.test(dlg.body), dlg.body.slice(0, 60));
+check('iOS pop-up teaches Add to Home Screen', /Add to Home Screen/i.test(dlg.body), dlg.body.slice(0, 60));
+check('iOS pop-up button is Got it', dlg.btn === 'Got it', dlg.btn);
+await mp.click('#appInstallLater');
+await mp.waitForTimeout(300);
+check('pop-up dismisses on Not now', await mp.evaluate(() => !document.getElementById('installDialog').classList.contains('show')));
+
 // Phone: synthetic install prompt must reveal the pill
 await mp.evaluate(() => {
   const pill = document.getElementById('installPill');
@@ -137,6 +165,27 @@ const afterScroll = await mp.evaluate(() => {
 });
 check('tab bar stays fixed at the bottom while scrolling', afterScroll.top > 0 && Math.abs(afterScroll.bottom - afterScroll.innerH) <= 1, `top=${afterScroll.top}, bottom=${afterScroll.bottom}, innerH=${afterScroll.innerH}`);
 await mob.close();
+
+// ---------------- ANDROID (install-capable variant) ----------------
+console.log('\n== ANDROID (Chrome 412x915, touch) ==');
+const and = await browser.newContext({ viewport: { width: 412, height: 915 }, hasTouch: true, isMobile: true, userAgent: 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Mobile Safari/537.36' });
+const ap = await and.newPage();
+await ap.goto(URL, { waitUntil: 'networkidle' });
+await ap.waitForTimeout(2600);
+const aState = await ap.evaluate(() => ({
+  shown: document.getElementById('installDialog').classList.contains('show'),
+  btn: document.getElementById('appInstallBtn').textContent,
+  body: document.getElementById('installDialogBody').textContent,
+}));
+check('Android pop-up shows', aState.shown);
+check('Android pop-up button is Install app', aState.btn === 'Install app', aState.btn);
+check('Android pop-up copy mentions home screen', /home screen/i.test(aState.body), aState.body.slice(0, 60));
+await ap.evaluate(() => window.dispatchEvent(new Event('beforeinstallprompt')));
+await ap.waitForTimeout(300);
+const aPill = await ap.evaluate(() => getComputedStyle(document.getElementById('installPill')).display);
+check('Android install pill appears on prompt', aPill === 'flex', aPill);
+await ap.click('#appInstallLater');
+await and.close();
 
 // ---------------- NARROW DESKTOP WINDOW ----------------
 console.log('\n== NARROW DESKTOP WINDOW (computer browser squished to 480px) ==');

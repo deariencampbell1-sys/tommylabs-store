@@ -487,6 +487,30 @@
     font-family:var(--mono); letter-spacing:.5px; transition:transform .2s;
   }
   .install-pill:hover { transform:translateX(-50%) translateY(-2px); }
+  /* ---------- app install dialog (phone pop-up) ---------- */
+  .install-dialog {
+    position:fixed; inset:0; z-index:2500; display:flex; align-items:flex-end; justify-content:center;
+    background:rgba(4,7,13,.55); backdrop-filter:blur(4px);
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .25s ease, visibility 0s linear .25s;
+  }
+  .install-dialog.show { opacity:1; visibility:visible; pointer-events:auto; transition:opacity .25s ease; }
+  .install-dialog-card {
+    width:min(92vw,420px); margin-bottom:calc(98px + env(safe-area-inset-bottom));
+    background:rgba(15,23,42,.98); border:1px solid var(--border-glow); border-radius:20px;
+    padding:16px 18px; box-shadow:0 20px 60px rgba(0,0,0,.75); display:flex; gap:14px; align-items:flex-start;
+  }
+  .install-dialog-icon { width:58px; height:58px; border-radius:14px; flex:none; box-shadow:0 4px 14px rgba(0,0,0,.5); }
+  .install-dialog-text { flex:1; min-width:0; }
+  .install-dialog-text h3 { margin:0 0 4px; font-size:15.5px; color:#fff; font-weight:800; }
+  .install-dialog-text p { margin:0 0 10px; font-size:13px; color:var(--gray-2); line-height:1.45; }
+  .install-dialog-actions { display:flex; gap:8px; }
+  .install-dialog-btn {
+    border:none; border-radius:999px; padding:9px 16px; font-weight:700; font-size:13px; cursor:pointer;
+    font-family:var(--mono); letter-spacing:.4px; -webkit-tap-highlight-color:transparent;
+  }
+  .install-dialog-btn.primary { background:linear-gradient(135deg,var(--blue-600),var(--blue-500)); color:#fff; }
+  .install-dialog-btn.ghost { background:transparent; color:var(--gray-2); border:1px solid var(--line); }
   /* PHONE APP MODE — driven by html.app-mode, set by an inline <head> script
      from the same phone detection the JS uses. Phones always get the store
      app; computers NEVER do, no matter how narrow the window is. */
@@ -782,6 +806,21 @@
 </nav>
 <button class="install-pill" id="installPill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg> Install Tommy's Labs</button>
 
+<!-- ================= APP INSTALL DIALOG (phone pop-up) ================= -->
+<div class="install-dialog" id="installDialog" role="dialog" aria-modal="true" aria-labelledby="installDialogTitle">
+  <div class="install-dialog-card">
+    <img src="/icon-192.png" alt="" class="install-dialog-icon" width="58" height="58">
+    <div class="install-dialog-text">
+      <h3 id="installDialogTitle">This is the Tommy Labs app</h3>
+      <p id="installDialogBody">This page is an app. Save it to your home screen — one tap to open, full-screen store, cart always at the bottom.</p>
+      <div class="install-dialog-actions">
+        <button class="install-dialog-btn primary" id="appInstallBtn">Install app</button>
+        <button class="install-dialog-btn ghost" id="appInstallLater">Not now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   // ---------- products ----------
   const products = [
@@ -1048,16 +1087,29 @@
 
   // ---------- install prompt (PWA, phone-only) ----------
   // The app is a PHONE app. Desktop visitors get the plain finished website;
-  // only phones (narrow + touch, or a phone UA) get the install pill.
+  // only phones (narrow + touch, or a phone UA) get the install pill and the
+  // "this is an app — save to home screen" pop-up.
   const IS_MOBILE = document.documentElement.classList.contains('app-mode');
   let deferredPrompt = null;
   const installPill = document.getElementById('installPill');
+  const installDialog = document.getElementById('installDialog');
+  const installBtn = document.getElementById('appInstallBtn');
+  const installLater = document.getElementById('appInstallLater');
+  const installBody = document.getElementById('installDialogBody');
   const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const IS_IOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+  function hideInstallDialog() { installDialog.classList.remove('show'); }
+  function rememberInstallDismiss() {
+    try { localStorage.setItem('tl_install_dialog', JSON.stringify(Date.now())); } catch (e) {}
+  }
+
   if (!standalone && IS_MOBILE) {
     window.addEventListener('beforeinstallprompt', e => {
       e.preventDefault();
       deferredPrompt = e;
       installPill.style.display = 'flex';
+      installBtn.textContent = 'Install app';
     });
     installPill.addEventListener('click', async () => {
       if (!deferredPrompt) return;
@@ -1066,7 +1118,48 @@
       deferredPrompt = null;
       installPill.style.display = 'none';
     });
-    window.addEventListener('appinstalled', () => { installPill.style.display = 'none'; });
+    window.addEventListener('appinstalled', () => {
+      installPill.style.display = 'none';
+      hideInstallDialog();
+      try { localStorage.setItem('tl_install_done', '1'); } catch (e) {}
+    });
+
+    // Pop-up: first visit of the day — tells the visitor this page IS an app
+    // and how to save it to the home screen. Not shown to returning visitors
+    // (within 24h), never after the app is installed, never on desktop.
+    let dialogDismissedAt = null, installedDone = false;
+    try { dialogDismissedAt = JSON.parse(localStorage.getItem('tl_install_dialog') || 'null'); } catch (e) {}
+    try { installedDone = localStorage.getItem('tl_install_done') === '1'; } catch (e) {}
+    const dismissedToday = dialogDismissedAt && (Date.now() - dialogDismissedAt) < 24 * 3600 * 1000;
+    if (!dismissedToday && !installedDone) {
+      setTimeout(() => {
+        if (document.hidden) return;
+        if (IS_IOS) {
+          // iOS has no install API — teach the Share -> Add to Home Screen flow
+          installBtn.textContent = 'Got it';
+          installBody.innerHTML = 'This page is an app. Tap the <b>Share</b> button in the browser bar, then choose <b>Add to Home Screen</b> — Tommy Labs lives on your phone like any other app.';
+        } else {
+          installBody.textContent = 'This page is an app. Save it to your home screen — one tap to open, full-screen store, cart always at the bottom.';
+        }
+        installDialog.classList.add('show');
+      }, 1500);
+    }
+    installLater.addEventListener('click', () => { hideInstallDialog(); rememberInstallDismiss(); });
+    installDialog.addEventListener('click', e => { if (e.target === installDialog) { hideInstallDialog(); rememberInstallDismiss(); } });
+    installBtn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        hideInstallDialog();
+      } else {
+        // No install API available (iOS) or prompt not fired yet —
+        // the body copy already explains what to do.
+        hideInstallDialog();
+        rememberInstallDismiss();
+      }
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') hideInstallDialog(); });
   } else {
     installPill.style.display = 'none';
   }
