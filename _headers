@@ -24,7 +24,12 @@
   Content-Type: application/manifest+json
 
 # Service worker — never cache so updates propagate immediately
+# (Note: Cloudflare Pages special-cases the literal /sw.js path with its own
+#  max-age=14400 on the apex hostname, so the worker lives at /service-worker.js.)
 /sw.js
+  Cache-Control: no-cache
+  Content-Type: application/javascript
+/service-worker.js
   Cache-Control: no-cache
   Content-Type: application/javascript
 
