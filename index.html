@@ -48,6 +48,16 @@
   }
   .logo { font-family:var(--mono); font-weight:800; font-size:21px; letter-spacing:1.5px; color:#fff; }
   .logo b { color:var(--cyan); }
+  .ic { width:1.1em; height:1.1em; vertical-align:-0.18em; display:inline-block; }
+  .btn .ic { margin-right:6px; }
+  .cart-btn .ic { margin-right:5px; }
+  .chip .ic { width:0.95em; height:0.95em; vertical-align:-0.15em; margin-right:4px; }
+  .stat b i svg { width:0.7em; height:0.7em; vertical-align:0.08em; }
+  .chip-float .ic { width:1em; height:1em; margin-right:5px; vertical-align:-0.12em; }
+  .viewer-close svg { width:20px; height:20px; }
+  .rm svg { width:14px; height:14px; }
+  .vibe .e svg { width:22px; height:22px; }
+  footer b svg { width:0.85em; height:0.85em; vertical-align:-0.1em; }
   .nav-links { display:flex; gap:30px; align-items:center; }
   .nav-links a { color:var(--gray-1); text-decoration:none; font-size:14.5px; font-weight:600; transition:color .2s; }
   .nav-links a:hover { color:var(--cyan); }
@@ -344,7 +354,7 @@
   .product-card.card3d { cursor:pointer; }
   .product-img-box.img3d { cursor:pointer; }
   .product-img-box.img3d::after {
-    content:'🧊 Click to view in 3D'; position:absolute; inset:0; z-index:4;
+    content:'◧ Click to view in 3D'; position:absolute; inset:0; z-index:4;
     background:rgba(9,13,22,.55); color:#fff; font-weight:700; font-size:14px;
     display:flex; align-items:center; justify-content:center; letter-spacing:.5px;
     opacity:0; transition:opacity .2s ease;
@@ -424,10 +434,12 @@
   }
 
   /* ---------- app tab bar (store-app bottom nav) ---------- */
-  body { padding-bottom:86px; }
+  /* Phone-only app chrome. Hidden everywhere by default, activated by the
+     mobile media query above. Desktop computers get the plain website. */
+  body { padding-bottom:0; }
   .tabbar {
     position:fixed; left:0; right:0; bottom:0; z-index:1000;
-    display:flex; align-items:stretch; justify-content:space-around;
+    display:none; align-items:stretch; justify-content:space-around;
     background:rgba(9,13,22,.88); backdrop-filter:blur(18px);
     border-top:1px solid var(--line);
     padding:8px 6px calc(8px + env(safe-area-inset-bottom));
@@ -467,14 +479,19 @@
     font-family:var(--mono); letter-spacing:.5px; transition:transform .2s;
   }
   .install-pill:hover { transform:translateX(-50%) translateY(-2px); }
+  /* PHONE APP MODE — declared AFTER the base so the cascade wins:
+     on a phone the site becomes a store app with a bottom tab bar
+     and install pill. Desktop never sees any of this. */
+  @media (max-width:900px) {
+    body { padding-bottom:86px; }
+    .tabbar { display:flex; }
+  }
+
+  /* Desktop (computer) = the finished website. No app chrome, ever. */
   @media (min-width:901px) {
-    body { padding-bottom:100px; }
-    .tabbar {
-      left:50%; right:auto; transform:translateX(-50%);
-      bottom:18px; width:min(560px,94vw); border-radius:22px;
-      border:1px solid var(--border-glow); padding:8px 10px calc(8px + env(safe-area-inset-bottom));
-    }
-    .tabbar.hidden { transform:translateX(-50%) translateY(120%); }
+    body { padding-bottom:0; }
+    .tabbar { display:none !important; }
+    .install-pill { display:none !important; }
   }
 </style>
 </head>
@@ -490,7 +507,7 @@
     <a href="#custom">Custom Orders</a>
     <a href="#about">About</a>
     <a class="cart-wrap" style="text-decoration:none;">
-      <button class="cart-btn" id="cartBtn">🛒 Cart <span class="cart-count" id="cartCount">0</span></button>
+      <button class="cart-btn" id="cartBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg> Cart <span class="cart-count" id="cartCount">0</span></button>
     </a>
   </div>
 </nav>
@@ -506,24 +523,24 @@
 
   <div class="hero-content">
     <div class="hero-text">
-      <div class="badge">🖨️ PRINTING SINCE DAY ONE</div>
+      <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> PRINTING SINCE DAY ONE</div>
       <h1>Hey, I'm Tommy.<br>I make <span class="grad">cool stuff</span> with a 3D printer.</h1>
       <p>Custom 3D printed creations — from low-poly Batman busts and RGB desk gear to articulated dragons and whatever you can dream up. Designed, printed, and finished by me.</p>
       <div class="btn-group">
-        <a href="#shop" class="btn btn-primary">🛍️ Browse the shop</a>
-        <a href="#lab" class="btn btn-outline">🔬 Explore the lab</a>
+        <a href="#shop" class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Browse the shop</a>
+        <a href="#lab" class="btn btn-outline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M10 2v6.5L4.5 18a2 2 0 0 0 1.8 3h11.4a2 2 0 0 0 1.8-3L14 8.5V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg> Explore the lab</a>
       </div>
       <div class="stats">
         <div class="stat"><b>250<i>+</i></b><span>prints delivered</span></div>
         <div class="stat"><b>40<i>+</i></b><span>original designs</span></div>
         <div class="stat"><b>1,200<i>+</i></b><span>hours printed</span></div>
-        <div class="stat"><b>5<i>★</i></b><span>happy customers</span></div>
+        <div class="stat"><b>5<i><svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" class="ic"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></i></b><span>happy customers</span></div>
       </div>
     </div>
 
     <div class="hero-media-frame">
-      <div class="chip-float c1">🖨️ Printed by <b>Tommy</b></div>
-      <div class="chip-float c2">💯 100% original</div>
+      <div class="chip-float c1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Printed by <b>Tommy</b></div>
+      <div class="chip-float c2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg> 100% original</div>
       <img src="img/lab-printing.webp" alt="3D printer constructing a complex geometric shape at Tommy Labs">
       <div class="photo-2-wrap"><img src="img/hero2.webp" alt="Another Tommy Labs custom print"></div>
     </div>
@@ -533,7 +550,7 @@
 <!-- ================= MARQUEE ================= -->
 <div class="marquee">
   <div class="marquee-inner" id="mq">
-    <span><b>0.08mm</b> LAYERS</span><span>PLA</span><span>PETG</span><span>ABS</span><span>TPU</span><span><b>250+</b> PRINTS</span><span>CUSTOM ORDERS</span><span><b>0.4mm</b> NOZZLE</span><span>RGB COMPATIBLE</span><span>BATMAN APPROVED 🦇</span>
+    <span><b>0.08mm</b> LAYERS</span><span>PLA</span><span>PETG</span><span>ABS</span><span>TPU</span><span><b>250+</b> PRINTS</span><span>CUSTOM ORDERS</span><span><b>0.4mm</b> NOZZLE</span><span>RGB COMPATIBLE</span><span>BATMAN APPROVED</span>
   </div>
 </div>
 
@@ -557,7 +574,7 @@
       </model-viewer>
     </div>
     <div class="owl-progress"><div class="owl-progress-fill" id="owlFill"></div></div>
-    <div class="scroll-hint">SCROLL TO SPIN ↓</div>
+    <div class="scroll-hint">SCROLL TO SPIN <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg></div>
   </div>
 </section>
 
@@ -612,7 +629,7 @@
     <form class="order-form" id="orderForm">
       <input type="text" id="orderName" placeholder="Your name" required>
       <input type="text" id="orderIdea" placeholder="Describe your idea..." required>
-      <button type="submit" class="btn btn-primary">Send it 🚀</button>
+      <button type="submit" class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg> Send it</button>
     </form>
   </div>
 </section>
@@ -623,7 +640,7 @@
     <div class="about-art reveal">
       <div class="avatar">TS</div>
       <div class="machine-card">
-        <div class="mc-title">THE WORKHORSE 🖨️</div>
+        <div class="mc-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> THE WORKHORSE</div>
         <svg viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="railG" x1="0" y1="0" x2="1" y2="0">
@@ -675,11 +692,11 @@
       <p>I'm Tommy — a maker who grew up on Batman, LEGO, gaming rigs, and anything that glows. That's exactly the vibe I print: custom busts and figurines, RGB-ready desk gear, articulated dragons, planters, phone stands... you name it.</p>
       <p>When you buy from me, you're getting a one-of-a-kind piece printed with care — not factory junk. And if I don't have it, I'll design it for you.</p>
       <div class="vibe">
-        <div><span class="e">🦇</span><span>BATMAN</span></div>
-        <div><span class="e">🧱</span><span>LEGO</span></div>
-        <div><span class="e">🎮</span><span>GAMING</span></div>
-        <div><span class="e">💡</span><span>RGB LIFE</span></div>
-        <div><span class="e">🖨️</span><span>3D PRINTING</span></div>
+        <div><span class="e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 6c-2.2 0-4 1.8-4 4 0-1.7-1.3-3-3-3-1.8 0-3.2 1.5-3.2 3.3 0 1.9 1.2 3.5 3 4.1.1 2.6 1.4 4.8 3.2 5.6 1.8-.8 3.1-3 3.2-5.6 1.8-.6 3-2.2 3-4.1 0-1.8-1.4-3.3-3.2-3.3z"/></svg></span><span>BATMAN</span></div>
+        <div><span class="e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></span><span>LEGO</span></div>
+        <div><span class="e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="10" y1="11" y2="11"/><line x1="8" x2="8" y1="9" y2="13"/><line x1="15" x2="15.01" y1="12" y2="12"/><line x1="18" x2="18.01" y1="10" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg></span><span>GAMING</span></div>
+        <div><span class="e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span><span>RGB LIFE</span></div>
+        <div><span class="e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></span><span>3D PRINTING</span></div>
       </div>
       <div class="bench-label">STRAIGHT OFF THE BENCH</div>
       <div class="bench-grid">
@@ -693,14 +710,20 @@
 <!-- ================= FOOTER ================= -->
 <footer>
   <div class="logo">TOMMY<b> LABS</b></div>
-  <p>© 2026 Tommy Labs · Made by Tommy Scruggs with <b>♥</b> and PLA</p>
-  <p>Blue is the main color. Gray is cool too. Obviously. 🦇</p>
+  <p>© 2026 Tommy Labs · Made by Tommy Scruggs with <b><svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></b> and PLA</p>
+  <p>Blue is the main color. Gray is cool too. Obviously.</p>
+  <div class="footer-links">
+    <a href="/terms.html">Terms of Service</a> ·
+    <a href="/privacy.html">Privacy Policy</a> ·
+    <a href="/shipping.html">Shipping Policy</a> ·
+    <a href="/refunds.html">Refunds &amp; Returns</a>
+  </div>
 </footer>
 
 <!-- ================= 3D VIEWER MODAL ================= -->
 <div class="viewer-modal" id="viewerModal">
   <div class="viewer-modal-box">
-    <button class="viewer-close" id="viewerClose" aria-label="Close 3D viewer">✕</button>
+    <button class="viewer-close" id="viewerClose" aria-label="Close 3D viewer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
     <div class="viewer-modal-title" id="viewerTitle">3D View</div>
     <model-viewer id="modalViewer" class="modal-viewer"
       camera-controls interaction-prompt="none"
@@ -719,7 +742,7 @@
   <div class="cart-items" id="cartItems"></div>
   <div class="cart-total">
     <div class="row"><span>Subtotal</span><b id="total">$0</b></div>
-    <button class="checkout" id="checkout">Checkout →</button>
+    <button class="checkout" id="checkout">Checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
   </div>
 </div>
 
@@ -749,7 +772,7 @@
     <span class="tab-badge" id="tabCartBadge">0</span>
   </button>
 </nav>
-<button class="install-pill" id="installPill">⬇️ Install Tommy's Labs</button>
+<button class="install-pill" id="installPill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg> Install Tommy's Labs</button>
 
 <script>
   // ---------- products ----------
@@ -779,8 +802,8 @@
     card.innerHTML = `
       <div class="product-img-box ${p.model ? 'img3d' : ''}" ${p.model ? `data-model="${p.model}"` : ''}>${p.model ? `<model-viewer class="card-model" src="${p.model}" alt="${p.name}" camera-controls disable-zoom interaction-prompt="none" auto-rotate rotation-per-second="14deg" exposure="1.1" tone-mapping="aces" loading="lazy"></model-viewer>` : (p.img ? `<img src="${p.img}" alt="${p.name}">` : artSVG(p.art))}</div>
       <div class="chip-row">
-        <span class="chip blue">⏱ ${p.time} print</span>
-        <span class="chip">🧵 ${p.filament}</span>
+        <span class="chip blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${p.time} print</span>
+        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg> ${p.filament}</span>
       </div>
       <div class="product-info">
         <h3>${p.name}</h3>
@@ -789,7 +812,7 @@
           <div class="price">$${p.price} <small>+ ship</small></div>
           <button class="add" data-id="${p.id}">Add to cart</button>
         </div>
-        ${p.model ? `<button class="view3d-btn" data-model="${p.model}">🧊 View in 3D</button>` : ''}
+        ${p.model ? `<button class="view3d-btn" data-model="${p.model}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="m21 16-9 5-9-5V8l9-5 9 5Z"/><path d="m3 8 9 5 9-5"/><path d="M12 13v8"/></svg> View in 3D</button>` : ''}
       </div>`;
     grid.appendChild(card);
   });
@@ -809,7 +832,7 @@
     cartCount.classList.toggle('show', ids.length > 0);
     drawerCount.textContent = `(${ids.reduce((s,id) => s + cart[id].qty, 0)})`;
     if (!ids.length) {
-      cartItems.innerHTML = '<div class="empty">Your cart is empty.<br>Go grab some cool stuff. 🦇</div>';
+      cartItems.innerHTML = '<div class="empty">Your cart is empty.<br>Go grab some cool stuff.</div>';
       totalEl.textContent = '$0';
       return;
     }
@@ -821,7 +844,7 @@
         <div class="qty">
           <button data-dec="${id}">−</button><span style="font-family:var(--mono);color:#fff;">${it.qty}</span><button data-inc="${id}">+</button>
         </div>
-        <button class="rm" data-rm="${id}">✕</button>
+        <button class="rm" data-rm="${id}" aria-label="Remove from cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
       </div>`;
     }).join('');
     totalEl.textContent = '$' + ids.reduce((s,id) => s + cart[id].qty * products.find(x => x.id == id).price, 0);
@@ -831,7 +854,7 @@
     cart[id] = cart[id] ? { qty: cart[id].qty + 1 } : { qty: 1 };
     renderCart();
     const p = products.find(x => x.id == id);
-    toast(`🛒 Added: ${p.name}`);
+    toast(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg> Added: ${p.name}`);
     if (!drawer.classList.contains('open')) { drawer.classList.add('open'); overlay.classList.add('show'); }
   }
 
@@ -856,9 +879,9 @@
 
   document.getElementById('checkout').addEventListener('click', async () => {
     const ids = Object.keys(cart);
-    if (!ids.length) { toast('🛒 Your cart is empty — add something cool first!'); return; }
+    if (!ids.length) { toast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg> Your cart is empty — add something cool first!'); return; }
     const btn = document.getElementById('checkout');
-    btn.disabled = true; btn.textContent = 'Contacting Stripe…';
+    btn.disabled = true; btn.innerHTML = 'Contacting Stripe…';
     try {
       const items = ids.map(id => ({ id: Number(id), qty: cart[id].qty }));
       const resp = await fetch('/api/checkout', {
@@ -870,8 +893,8 @@
       if (!resp.ok) throw new Error(data.error || 'Checkout failed');
       window.location.href = data.url;
     } catch (err) {
-      toast('💳 ' + (err.message || 'Could not reach checkout. Try again.'));
-      btn.disabled = false; btn.textContent = 'Checkout →';
+      toast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg> ' + (err.message || 'Could not reach checkout. Try again.'));
+      btn.disabled = false; btn.innerHTML = 'Checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
     }
   });
 
@@ -890,7 +913,7 @@
     e.preventDefault();
     const name = document.getElementById('orderName').value.trim();
     const idea = document.getElementById('orderIdea').value.trim();
-    toast(`🚀 Got it, ${name}! Tommy will hit you back about: "${idea.slice(0,40)}${idea.length>40?'…':''}"`);
+    toast(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg> Got it, ${name}! Tommy will hit you back about: "${idea.slice(0,40)}${idea.length>40?'…':''}"`);
     e.target.reset();
   });
 
@@ -898,7 +921,7 @@
   let toastTimer = null;
   function toast(msg) {
     const t = document.getElementById('toast');
-    t.textContent = msg; t.classList.add('show');
+    t.innerHTML = msg; t.classList.add('show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
   }
@@ -1018,11 +1041,15 @@
   renderCart = function () { _origRender(); syncTabBadge(); };
   syncTabBadge();
 
-  // ---------- install prompt (PWA) ----------
+  // ---------- install prompt (PWA, phone-only) ----------
+  // The app is a PHONE app. Desktop visitors get the plain finished website;
+  // only phones (narrow + touch, or a phone UA) get the install pill.
+  const IS_MOBILE = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ||
+    (window.matchMedia('(max-width: 900px)').matches && window.matchMedia('(pointer: coarse)').matches);
   let deferredPrompt = null;
   const installPill = document.getElementById('installPill');
   const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-  if (!standalone) {
+  if (!standalone && IS_MOBILE) {
     window.addEventListener('beforeinstallprompt', e => {
       e.preventDefault();
       deferredPrompt = e;
