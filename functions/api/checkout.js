@@ -2,8 +2,10 @@
 // POST /api/checkout  body: { items: [ { id: 1, qty: 2 }, ... ] }
 // Returns { url } — client redirects to Stripe Checkout.
 //
-// Product id -> Stripe Price id mapping (test mode).
-// Flip STRIPE_MODE=live in Pages vars and the live price map to go live.
+// Defaults to LIVE mode (STRIPE_LIVE_SECRET_KEY). Set STRIPE_MODE=test to use
+// the test price map + STRIPE_TEST_SECRET_KEY instead.
+// Every session sets payment_intent_data.statement_descriptor = 'TOMMY LABS'
+// so card statements read Tommy Labs, never the RHOBEAR account descriptor.
 
 const PRICES = {
   test: {
