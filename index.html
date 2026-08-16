@@ -2,8 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tommy Labs — Custom 3D Printed Creations by Tommy Scruggs</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="Custom 3D printed creations by Tommy Scruggs — low-poly busts, articulated dragons, RGB desk gear and more. Designed, printed and finished by hand.">
+<meta name="theme-color" content="#090d16">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tommy's Labs">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<title>Tommy's Labs — Custom 3D Printed Creations by Tommy Scruggs</title>
 <script type="module" src="vendor/model-viewer.min.js"></script>
 <style>
   :root {
@@ -176,6 +186,7 @@
   }
   .product-img-box svg { height:78%; width:auto; transition:transform .45s ease; }
   .product-img-box img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .45s ease; }
+  .product-img-box model-viewer.card-model { width:100%; height:100%; --poster-color:transparent; background:transparent; }
   .product-card:hover .product-img-box svg { transform:scale(1.1); }
   .product-card:hover .product-img-box img { transform:scale(1.05); }
   .chip-row { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
@@ -411,6 +422,60 @@
     .photo-2-wrap { left:8px; }
     .nav-links a:not(.cart-wrap) { display:none; }
   }
+
+  /* ---------- app tab bar (store-app bottom nav) ---------- */
+  body { padding-bottom:86px; }
+  .tabbar {
+    position:fixed; left:0; right:0; bottom:0; z-index:1000;
+    display:flex; align-items:stretch; justify-content:space-around;
+    background:rgba(9,13,22,.88); backdrop-filter:blur(18px);
+    border-top:1px solid var(--line);
+    padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+    box-shadow:0 -12px 32px rgba(0,0,0,.5);
+    transition:transform .28s ease;
+  }
+  .tabbar.hidden { transform:translateY(105%); }
+  .tab {
+    flex:1; max-width:110px; display:flex; flex-direction:column; align-items:center; gap:3px;
+    background:none; border:none; cursor:pointer; color:var(--gray-1);
+    font-family:var(--mono); font-size:10px; letter-spacing:.8px; padding:6px 2px;
+    border-radius:12px; transition:color .2s, background .2s;
+    position:relative; -webkit-tap-highlight-color:transparent;
+  }
+  .tab svg { width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .tab.active { color:var(--cyan); }
+  .tab.active::before {
+    content:''; position:absolute; top:-8px; left:50%; transform:translateX(-50%);
+    width:26px; height:3px; border-radius:999px;
+    background:linear-gradient(90deg,var(--blue-500),var(--cyan));
+    box-shadow:0 0 10px rgba(56,189,248,.9);
+  }
+  .tab:active { background:rgba(56,189,248,.08); }
+  .tab-badge {
+    position:absolute; top:2px; right:calc(50% - 24px); min-width:17px; height:17px; padding:0 4px;
+    background:#ff5d7a; border-radius:999px; font-size:10px; color:#fff;
+    display:none; align-items:center; justify-content:center; font-family:var(--mono);
+    box-shadow:0 2px 8px rgba(0,0,0,.5);
+  }
+  .tab-badge.show { display:flex; }
+  .install-pill {
+    position:fixed; left:50%; transform:translateX(-50%); bottom:calc(84px + env(safe-area-inset-bottom));
+    z-index:1030; display:none; align-items:center; gap:8px;
+    background:linear-gradient(135deg,var(--blue-600),var(--blue-500)); color:#fff;
+    border:none; cursor:pointer; font-weight:700; font-size:13.5px;
+    padding:12px 20px; border-radius:999px; box-shadow:0 10px 30px rgba(37,99,235,.55);
+    font-family:var(--mono); letter-spacing:.5px; transition:transform .2s;
+  }
+  .install-pill:hover { transform:translateX(-50%) translateY(-2px); }
+  @media (min-width:901px) {
+    body { padding-bottom:100px; }
+    .tabbar {
+      left:50%; right:auto; transform:translateX(-50%);
+      bottom:18px; width:min(560px,94vw); border-radius:22px;
+      border:1px solid var(--border-glow); padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+    }
+    .tabbar.hidden { transform:translateX(-50%) translateY(120%); }
+  }
 </style>
 </head>
 <body>
@@ -479,7 +544,6 @@
     <div class="owl-bob">
       <model-viewer id="owlViewer" class="owl-viewer"
         src="models/owl.glb"
-        poster="img/owl-poster.jpg"
         alt="Multi-color 3D printed owl by Tommy Labs"
         camera-controls
         interaction-prompt="none"
@@ -661,6 +725,32 @@
 
 <div id="toast"></div>
 
+<!-- ================= APP TAB BAR ================= -->
+<nav class="tabbar" id="tabBar" aria-label="App navigation">
+  <button class="tab active" data-scroll="home" aria-label="Home">
+    <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg>
+    <span>Home</span>
+  </button>
+  <button class="tab" data-scroll="shop" aria-label="Shop">
+    <svg viewBox="0 0 24 24"><path d="M3.5 9 5 21h14l1.5-12"/><path d="M2.5 9h19l-1.2-4H3.7L2.5 9Z"/><path d="M8.5 13v-2.5m0 0V8.5a3.5 3.5 0 0 1 7 0v2"/></svg>
+    <span>Shop</span>
+  </button>
+  <button class="tab" data-scroll="lab" aria-label="Print lab">
+    <svg viewBox="0 0 24 24"><path d="M9 3h6"/><path d="M10 3v6.2L4.8 18a2.4 2.4 0 0 0 2.1 3.6h10.2a2.4 2.4 0 0 0 2.1-3.6L14 9.2V3"/><path d="M7.5 14.5h9"/></svg>
+    <span>Lab</span>
+  </button>
+  <button class="tab" data-scroll="custom" aria-label="Custom orders">
+    <svg viewBox="0 0 24 24"><path d="M12 3v2"/><path d="M12 19v2"/><path d="M5.6 5.6 7 7"/><path d="M17 17l1.4 1.4"/><path d="M3 12h2"/><path d="M19 12h2"/><path d="M5.6 18.4 7 17"/><path d="M17 7l1.4-1.4"/><circle cx="12" cy="12" r="3.2"/></svg>
+    <span>Custom</span>
+  </button>
+  <button class="tab" id="tabCartBtn" aria-label="Cart">
+    <svg viewBox="0 0 24 24"><path d="M3 4h2.2l2.1 11.2a1.8 1.8 0 0 0 1.8 1.5h8.5a1.8 1.8 0 0 0 1.8-1.4L21.5 8H6"/><circle cx="10" cy="21" r="1.4"/><circle cx="18" cy="21" r="1.4"/></svg>
+    <span>Cart</span>
+    <span class="tab-badge" id="tabCartBadge">0</span>
+  </button>
+</nav>
+<button class="install-pill" id="installPill">⬇️ Install Tommy's Labs</button>
+
 <script>
   // ---------- products ----------
   const products = [
@@ -687,7 +777,7 @@
     card.className = 'product-card reveal' + (p.model ? ' card3d' : '');
     if (p.model) card.dataset.model = p.model;
     card.innerHTML = `
-      <div class="product-img-box ${p.model ? 'img3d' : ''}" ${p.model ? `data-model="${p.model}"` : ''}>${p.img ? `<img src="${p.img}" alt="${p.name}">` : artSVG(p.art)}</div>
+      <div class="product-img-box ${p.model ? 'img3d' : ''}" ${p.model ? `data-model="${p.model}"` : ''}>${p.model ? `<model-viewer class="card-model" src="${p.model}" alt="${p.name}" camera-controls disable-zoom interaction-prompt="none" auto-rotate rotation-per-second="14deg" exposure="1.1" tone-mapping="aces" loading="lazy"></model-viewer>` : (p.img ? `<img src="${p.img}" alt="${p.name}">` : artSVG(p.art))}</div>
       <div class="chip-row">
         <span class="chip blue">⏱ ${p.time} print</span>
         <span class="chip">🧵 ${p.filament}</span>
@@ -878,6 +968,84 @@
     entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('visible'); io.unobserve(en.target); } });
   }, { threshold: .12 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ---------- app tab bar (bottom nav) ----------
+  const tabBar = document.getElementById('tabBar');
+  const tabs = [...document.querySelectorAll('.tab[data-scroll]')];
+  const tabBadge = document.getElementById('tabCartBadge');
+  const spySections = [
+    { id: 'home', el: document.querySelector('.hero-container') },
+    { id: 'shop', el: document.getElementById('shop') },
+    { id: 'lab', el: document.getElementById('lab') },
+    { id: 'custom', el: document.getElementById('custom') },
+    { id: 'about', el: document.getElementById('about') }
+  ];
+  function setActiveTab(id) { tabs.forEach(t => t.classList.toggle('active', t.dataset.scroll === id)); }
+  function tabSpy() {
+    const probe = window.innerHeight * 0.4;
+    let current = 'home';
+    spySections.forEach(s => { if (s.el && s.el.getBoundingClientRect().top <= probe) current = s.id; });
+    setActiveTab(current);
+  }
+  tabs.forEach(t => {
+    t.addEventListener('click', () => {
+      if (t.dataset.scroll === 'home') window.scrollTo({ top: 0, behavior: 'smooth' });
+      else { const el = document.getElementById(t.dataset.scroll); if (el) el.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+  document.getElementById('tabCartBtn').addEventListener('click', () => {
+    drawer.classList.add('open'); overlay.classList.add('show');
+  });
+  let tabTick = false;
+  let lastY = 0;
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    if (y > lastY && y > 140) tabBar.classList.add('hidden');
+    else tabBar.classList.remove('hidden');
+    lastY = y;
+    if (!tabTick) { requestAnimationFrame(tabSpy); tabTick = true; }
+  }, { passive: true });
+  window.addEventListener('resize', tabSpy);
+  tabSpy();
+
+  // cart badge on the cart tab
+  function syncTabBadge() {
+    const n = Object.keys(cart).reduce((s, id) => s + cart[id].qty, 0);
+    tabBadge.textContent = n;
+    tabBadge.classList.toggle('show', n > 0);
+  }
+  const _origRender = renderCart;
+  renderCart = function () { _origRender(); syncTabBadge(); };
+  syncTabBadge();
+
+  // ---------- install prompt (PWA) ----------
+  let deferredPrompt = null;
+  const installPill = document.getElementById('installPill');
+  const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  if (!standalone) {
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installPill.style.display = 'flex';
+    });
+    installPill.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      installPill.style.display = 'none';
+    });
+    window.addEventListener('appinstalled', () => { installPill.style.display = 'none'; });
+  } else {
+    installPill.style.display = 'none';
+  }
+
+  // ---------- service worker registration ----------
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(err => console.warn('SW registration failed:', err));
+    });
+  }
 </script>
 </body>
 </html>

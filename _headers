@@ -1,0 +1,37 @@
+# Edge caching for Cloudflare Pages (tommylabs.store)
+# .glb models are the heavy assets — cache at edge for 1 year, immutable
+/models/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+# Product/lab imagery — cache 30 days, revalidate
+/img/*
+  Cache-Control: public, max-age=2592000
+
+# Vendor JS (model-viewer) — cache 1 year, immutable
+/vendor/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML — short cache so edits show fast, revalidate
+/index.html
+  Cache-Control: public, max-age=300
+/success.html
+  Cache-Control: public, max-age=300
+
+# PWA manifest — short cache, correct MIME so browsers can install
+/manifest.webmanifest
+  Cache-Control: public, max-age=3600
+  Content-Type: application/manifest+json
+
+# Service worker — never cache so updates propagate immediately
+/sw.js
+  Cache-Control: no-cache
+  Content-Type: application/javascript
+
+# PWA icons — cache long, they never change
+/icon-*.png
+  Cache-Control: public, max-age=31536000, immutable
+/apple-touch-icon.png
+  Cache-Control: public, max-age=31536000, immutable
+/favicon.ico
+  Cache-Control: public, max-age=31536000, immutable
