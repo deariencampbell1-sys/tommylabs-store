@@ -479,21 +479,21 @@
     font-family:var(--mono); letter-spacing:.5px; transition:transform .2s;
   }
   .install-pill:hover { transform:translateX(-50%) translateY(-2px); }
-  /* PHONE APP MODE — declared AFTER the base so the cascade wins:
-     on a phone the site becomes a store app with a bottom tab bar
-     and install pill. Desktop never sees any of this. */
-  @media (max-width:900px) {
-    body { padding-bottom:86px; }
-    .tabbar { display:flex; }
-  }
-
-  /* Desktop (computer) = the finished website. No app chrome, ever. */
-  @media (min-width:901px) {
-    body { padding-bottom:0; }
-    .tabbar { display:none !important; }
-    .install-pill { display:none !important; }
-  }
+  /* PHONE APP MODE — driven by html.app-mode, set by an inline <head> script
+     from the same phone detection the JS uses. Phones always get the store
+     app; computers NEVER do, no matter how narrow the window is. */
+  html.app-mode body { padding-bottom:86px; }
+  html.app-mode .tabbar { display:flex; }
 </style>
+<script>
+  /* Phone-app gate — set before first paint so computers never see the
+     store-app chrome (bottom tab bar / install pill), and phones always
+     get it regardless of window width (e.g. landscape). */
+  document.documentElement.classList.toggle('app-mode',
+    /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ||
+    (window.matchMedia('(max-width: 900px)').matches &&
+     window.matchMedia('(pointer: coarse)').matches));
+</script>
 </head>
 <body>
 
@@ -1044,8 +1044,7 @@
   // ---------- install prompt (PWA, phone-only) ----------
   // The app is a PHONE app. Desktop visitors get the plain finished website;
   // only phones (narrow + touch, or a phone UA) get the install pill.
-  const IS_MOBILE = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ||
-    (window.matchMedia('(max-width: 900px)').matches && window.matchMedia('(pointer: coarse)').matches);
+  const IS_MOBILE = document.documentElement.classList.contains('app-mode');
   let deferredPrompt = null;
   const installPill = document.getElementById('installPill');
   const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
@@ -1068,7 +1067,9 @@
   }
 
   // ---------- service worker registration ----------
-  if ('serviceWorker' in navigator) {
+  // Phone-only: a SW is what makes a page installable — registering it on
+  // desktop is exactly what made the phone app pop up on computers.
+  if (IS_MOBILE && 'serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/service-worker.js').catch(err => console.warn('SW registration failed:', err));
     });
