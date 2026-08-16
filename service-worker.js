@@ -1,5 +1,5 @@
 /* Tommy's Labs — service worker (app shell + runtime cache) */
-const VERSION = 'tommylabs-v5';
+const VERSION = 'tommylabs-v6';
 const PRECACHE = VERSION + '-precache';
 const RUNTIME = VERSION + '-runtime';
 
@@ -56,17 +56,21 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Static assets (img/, models/, vendor/): cache-first, fill cache on first view.
+  // Static assets (img/, models/, vendor/): stale-while-revalidate —
+  // served instantly from cache, refreshed in the background on every
+  // view so a deploy's new images/models reach installed apps without
+  // a version bump. (Cache-first here is what stuck the old sideways
+  // photos to phones forever.)
   event.respondWith(
     caches.match(req).then((cached) => {
-      if (cached) return cached;
-      return fetch(req).then((resp) => {
+      const refresh = fetch(req).then((resp) => {
         if (resp && resp.status === 200 && (resp.type === 'basic' || resp.type === 'cors')) {
           const copy = resp.clone();
           caches.open(RUNTIME).then((c) => c.put(req, copy));
         }
         return resp;
-      });
+      }).catch(() => null);
+      return cached || refresh;
     })
   );
 });
