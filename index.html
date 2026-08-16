@@ -39,7 +39,9 @@
   section { scroll-margin-top:84px; }
 
   /* ---------- nav ---------- */
-  nav {
+  /* Scoped to the site header — a bare `nav` selector would also hit the
+     phone app's <nav class=tabbar> and pin the app menu to the top. */
+  .site-nav {
     position:fixed; top:0; left:0; width:100%; z-index:1000;
     display:flex; align-items:center; justify-content:space-between;
     padding:14px 36px;
@@ -196,7 +198,7 @@
   }
   .product-img-box svg { height:78%; width:auto; transition:transform .45s ease; }
   .product-img-box img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .45s ease; }
-  .product-img-box model-viewer.card-model { width:100%; height:100%; --poster-color:transparent; background:transparent; }
+  .product-img-box model-viewer.card-model { width:100%; height:100%; --poster-color:transparent; background:transparent; pointer-events:none; }
   .product-card:hover .product-img-box svg { transform:scale(1.1); }
   .product-card:hover .product-img-box img { transform:scale(1.05); }
   .chip-row { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
@@ -335,9 +337,13 @@
   .viewer-modal {
     position:fixed; inset:0; z-index:2000; display:flex; align-items:center; justify-content:center;
     background:rgba(4,7,13,.88); backdrop-filter:blur(14px);
-    opacity:0; pointer-events:none; transition:opacity .3s ease;
+    /* visibility:hidden makes the closed modal AND its model-viewer (which
+       re-enables pointer-events internally) completely non-hit-testable —
+       otherwise the invisible viewer eats clicks over the whole page. */
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .3s ease, visibility 0s linear .3s;
   }
-  .viewer-modal.open { opacity:1; pointer-events:auto; }
+  .viewer-modal.open { opacity:1; visibility:visible; pointer-events:auto; transition:opacity .3s ease; }
   .viewer-modal-box {
     position:relative; width:min(92vw,1080px); height:min(86vh,780px);
     background:rgba(15,23,42,.85); border:1px solid var(--border-glow); border-radius:20px;
@@ -438,15 +444,17 @@
      mobile media query above. Desktop computers get the plain website. */
   body { padding-bottom:0; }
   .tabbar {
-    position:fixed; left:0; right:0; bottom:0; z-index:1000;
+    position:fixed; left:0; right:0; bottom:0; top:auto; z-index:1000;
+    /* Explicit height: a fixed element with only bottom:0 and auto height
+       stretches to the full viewport on mobile — the bar must be a
+       real app-menu strip, always pinned to the bottom. */
+    height:calc(58px + env(safe-area-inset-bottom));
     display:none; align-items:stretch; justify-content:space-around;
     background:rgba(9,13,22,.88); backdrop-filter:blur(18px);
     border-top:1px solid var(--line);
     padding:8px 6px calc(8px + env(safe-area-inset-bottom));
     box-shadow:0 -12px 32px rgba(0,0,0,.5);
-    transition:transform .28s ease;
   }
-  .tabbar.hidden { transform:translateY(105%); }
   .tab {
     flex:1; max-width:110px; display:flex; flex-direction:column; align-items:center; gap:3px;
     background:none; border:none; cursor:pointer; color:var(--gray-1);
@@ -498,7 +506,7 @@
 <body>
 
 <!-- ================= NAV ================= -->
-<nav>
+<nav class="site-nav">
   <div class="logo">TOMMY<b> LABS</b></div>
   <div class="nav-links">
     <a href="#lab">Print Lab</a>
@@ -713,10 +721,10 @@
   <p>© 2026 Tommy Labs · Made by Tommy Scruggs with <b><svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></b> and PLA</p>
   <p>Blue is the main color. Gray is cool too. Obviously.</p>
   <div class="footer-links">
-    <a href="/terms.html">Terms of Service</a> ·
-    <a href="/privacy.html">Privacy Policy</a> ·
-    <a href="/shipping.html">Shipping Policy</a> ·
-    <a href="/refunds.html">Refunds &amp; Returns</a>
+    <a href="/terms">Terms of Service</a> ·
+    <a href="/privacy">Privacy Policy</a> ·
+    <a href="/shipping">Shipping Policy</a> ·
+    <a href="/refunds">Refunds &amp; Returns</a>
   </div>
 </footer>
 
@@ -800,7 +808,7 @@
     card.className = 'product-card reveal' + (p.model ? ' card3d' : '');
     if (p.model) card.dataset.model = p.model;
     card.innerHTML = `
-      <div class="product-img-box ${p.model ? 'img3d' : ''}" ${p.model ? `data-model="${p.model}"` : ''}>${p.model ? `<model-viewer class="card-model" src="${p.model}" alt="${p.name}" camera-controls disable-zoom interaction-prompt="none" auto-rotate rotation-per-second="14deg" exposure="1.1" tone-mapping="aces" loading="lazy"></model-viewer>` : (p.img ? `<img src="${p.img}" alt="${p.name}">` : artSVG(p.art))}</div>
+      <div class="product-img-box ${p.model ? 'img3d' : ''}" ${p.model ? `data-model="${p.model}"` : ''}>${p.model ? `<model-viewer class="card-model" src="${p.model}" alt="${p.name}" interaction-prompt="none" auto-rotate rotation-per-second="14deg" exposure="1.1" tone-mapping="aces" loading="lazy"></model-viewer>` : (p.img ? `<img src="${p.img}" alt="${p.name}">` : artSVG(p.art))}</div>
       <div class="chip-row">
         <span class="chip blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${p.time} print</span>
         <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg> ${p.filament}</span>
@@ -1020,12 +1028,9 @@
     drawer.classList.add('open'); overlay.classList.add('show');
   });
   let tabTick = false;
-  let lastY = 0;
   window.addEventListener('scroll', () => {
-    const y = window.scrollY;
-    if (y > lastY && y > 140) tabBar.classList.add('hidden');
-    else tabBar.classList.remove('hidden');
-    lastY = y;
+    // Tab bar is a native-style app menu: ALWAYS fixed at the bottom.
+    // No hide-on-scroll — it must never leave the bottom of the screen.
     if (!tabTick) { requestAnimationFrame(tabSpy); tabTick = true; }
   }, { passive: true });
   window.addEventListener('resize', tabSpy);

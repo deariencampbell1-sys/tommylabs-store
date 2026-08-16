@@ -57,6 +57,9 @@ export async function onRequestPost(context) {
   params.set('cancel_url', `${origin}/index.html#shop`);
   params.set('client_reference_id', `tommylabs-${Date.now()}`);
   params.set('allow_promotion_codes', 'true');
+  params.set('metadata[store]', 'tommylabs');
+  params.set('payment_intent_data[statement_descriptor]', 'TOMMY LABS');
+  params.set('payment_intent_data[description]', 'Tommy Labs 3D printed creations');
   lineItems.forEach((li, i) => {
     params.append(`line_items[${i}][price]`, li.price);
     params.append(`line_items[${i}][quantity]`, String(li.quantity));
