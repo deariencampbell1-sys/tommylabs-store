@@ -1,5 +1,5 @@
 /* Tommy's Labs — service worker (app shell + runtime cache) */
-const VERSION = 'tommylabs-v2';
+const VERSION = 'tommylabs-v3';
 const PRECACHE = VERSION + '-precache';
 const RUNTIME = VERSION + '-runtime';
 
