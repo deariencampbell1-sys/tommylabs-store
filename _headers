@@ -23,14 +23,16 @@
   Cache-Control: public, max-age=3600
   Content-Type: application/manifest+json
 
-# Service worker — never cache so updates propagate immediately
-# (Note: Cloudflare Pages special-cases the literal /sw.js path with its own
-#  max-age=14400 on the apex hostname, so the worker lives at /service-worker.js.)
+# Service worker — near-instant refresh so updates propagate immediately.
+# (Cloudflare's zone Browser Cache TTL stamps no-cache responses with
+#  max-age=14400 on the apex hostname; a positive max-age=60 is respected
+#  everywhere and keeps the worker effectively fresh. SW update checks
+#  revalidate against the network regardless of this header.)
 /sw.js
-  Cache-Control: no-cache
+  Cache-Control: public, max-age=60
   Content-Type: application/javascript
 /service-worker.js
-  Cache-Control: no-cache
+  Cache-Control: public, max-age=60
   Content-Type: application/javascript
 
 # PWA icons — cache long, they never change
