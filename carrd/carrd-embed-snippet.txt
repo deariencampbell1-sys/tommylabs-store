@@ -1,0 +1,14 @@
+<!-- Tommy Labs 3D embed for Carrd Pro (Widgets + Embeds / custom code element).
+     1) Host the models/ folder anywhere public (Netlify Drop, GitHub, any CDN).
+     2) Replace YOUR-HOST below with the real base URL, e.g. https://yourname.netlify.app
+     3) Paste this block into a Widget element on your Carrd page. -->
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.1.0/model-viewer.min.js"></script>
+<model-viewer src="https://YOUR-HOST/models/owl.glb"
+  camera-controls interaction-prompt="none"
+  exposure="1.15" tone-mapping="aces"
+  camera-orbit="20deg 78deg auto"
+  style="width:100%;height:70vh;background:transparent;">
+  <directional-light intensity="1.7" color="#ffffff" position="2 3 1"></directional-light>
+  <directional-light intensity="0.9" color="#60a5fa" position="-2 -1 -1"></directional-light>
+</model-viewer>
+<!-- swap models/owl.glb for dragon.glb, batman.glb, wolf.glb, tiger.glb for the other pieces -->

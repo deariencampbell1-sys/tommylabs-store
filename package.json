@@ -1,0 +1,16 @@
+{
+  "name": "tommylabs-store",
+  "version": "1.0.0",
+  "description": "Your complete website: 4 products (Batman, Dragon, Wolf, Tiger), each with a real\r photo AND a click-to-open 3D model, plus the scroll-spinning 3D owl centerpiece.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "wrangler": "^4.123.0"
+  }
+}
