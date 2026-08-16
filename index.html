@@ -36,7 +36,7 @@
     background:var(--bg); color:var(--gray-2); overflow-x:hidden;
   }
   ::selection { background:rgba(59,130,246,.45); color:#fff; }
-  section { scroll-margin-top:84px; }
+  section { scroll-margin-top:96px; }
 
   /* ---------- nav ---------- */
   /* Scoped to the site header — a bare `nav` selector would also hit the
@@ -50,7 +50,7 @@
   }
   .logo { font-family:var(--mono); font-weight:800; font-size:21px; letter-spacing:1.5px; color:#fff; }
   .logo b { color:var(--cyan); }
-  .logo-img { height:34px; width:auto; border-radius:8px; display:block; box-shadow:0 2px 10px rgba(0,0,0,.45); }
+  .logo-img { height:46px; width:auto; border-radius:10px; display:block; box-shadow:0 2px 10px rgba(0,0,0,.45); }
   footer .logo-img { height:26px; border-radius:6px; }
   .ic { width:1.1em; height:1.1em; vertical-align:-0.18em; display:inline-block; }
   .btn .ic { margin-right:6px; }
@@ -200,7 +200,6 @@
   }
   .product-img-box svg { height:78%; width:auto; transition:transform .45s ease; }
   .product-img-box img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .45s ease; }
-  .product-img-box model-viewer.card-model { width:100%; height:100%; --poster-color:transparent; background:transparent; pointer-events:none; }
   .product-card:hover .product-img-box svg { transform:scale(1.1); }
   .product-card:hover .product-img-box img { transform:scale(1.05); }
   .chip-row { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
@@ -849,7 +848,7 @@
     card.className = 'product-card reveal' + (p.model ? ' card3d' : '');
     if (p.model) card.dataset.model = p.model;
     card.innerHTML = `
-      <div class="product-img-box ${p.model ? 'img3d' : ''}" ${p.model ? `data-model="${p.model}"` : ''}>${p.model ? `<model-viewer class="card-model" src="${p.model}" alt="${p.name}" interaction-prompt="none" auto-rotate rotation-per-second="14deg" exposure="1.1" tone-mapping="aces" loading="lazy"></model-viewer>` : (p.img ? `<img src="${p.img}" alt="${p.name}">` : artSVG(p.art))}</div>
+      <div class="product-img-box ${p.model ? 'img3d' : ''}" ${p.model ? `data-model="${p.model}"` : ''}>${p.img ? `<img src="${p.img}" alt="${p.name}">` : artSVG(p.art)}</div>
       <div class="chip-row">
         <span class="chip blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${p.time} print</span>
         <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg> ${p.filament}</span>
