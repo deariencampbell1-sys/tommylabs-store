@@ -80,6 +80,17 @@ await dp.mouse.click(dbox.x + dbox.w / 2, dbox.y + dbox.h / 2);
 await dp.waitForTimeout(1200);
 const dopen = await dp.evaluate(() => document.getElementById('viewerModal').classList.contains('open'));
 check('clicking the picture opens the 3D viewer on desktop', dopen);
+const coverState = await dp.evaluate(() => {
+  const box = document.querySelector('.product-img-box.img3d');
+  const img = box.querySelector('img');
+  return {
+    hasImg: !!img,
+    imgLoaded: !!img && img.complete && img.naturalWidth > 0,
+    hasLivePreview: !!box.querySelector('model-viewer'),
+    src: img ? img.getAttribute('src') : null,
+  };
+});
+check('product card shows the cover photo (not a live 3D preview)', coverState.hasImg && coverState.imgLoaded && !coverState.hasLivePreview, coverState.src);
 check('no install pop-up on desktop', await dp.evaluate(() => !document.getElementById('installDialog').classList.contains('show')));
 await desk.close();
 
