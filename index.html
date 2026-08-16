@@ -764,8 +764,25 @@
   });
   overlay.addEventListener('click', () => { drawer.classList.remove('open'); overlay.classList.remove('show'); });
 
-  document.getElementById('checkout').addEventListener('click', () => {
-    toast('💳 This is a demo store — hooking up real payments comes next!');
+  document.getElementById('checkout').addEventListener('click', async () => {
+    const ids = Object.keys(cart);
+    if (!ids.length) { toast('🛒 Your cart is empty — add something cool first!'); return; }
+    const btn = document.getElementById('checkout');
+    btn.disabled = true; btn.textContent = 'Contacting Stripe…';
+    try {
+      const items = ids.map(id => ({ id: Number(id), qty: cart[id].qty }));
+      const resp = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items }),
+      });
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.error || 'Checkout failed');
+      window.location.href = data.url;
+    } catch (err) {
+      toast('💳 ' + (err.message || 'Could not reach checkout. Try again.'));
+      btn.disabled = false; btn.textContent = 'Checkout →';
+    }
   });
 
   // ---------- videos: auto-activate, graceful fallback ----------
