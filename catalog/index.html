@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tommy Labs Maker Catalog — Community 3D Print Ideas</title>
+<meta name="description" content="The Tommy Labs community catalog. Browse ideas, upload your own, and turn 2D pictures into 3D prints.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23090d16'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%2338bdf8' font-family='Arial' font-weight='bold'%3ETL%3C/text%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#090d16; --bg2:#0d1322; --bg3:#111a2e;
+    --card:#0f1729; --card2:#14203a;
+    --line:#1e2c4a; --line2:#27395f;
+    --text:#e8eefb; --muted:#8fa3c8; --faint:#5a6c8f;
+    --cyan:#38bdf8; --cyan-dim:#1d6fa3;
+    --green:#4ade80; --amber:#fbbf24; --red:#f87171; --purple:#a78bfa;
+    --radius:16px; --radius-sm:10px;
+    --shadow:0 8px 30px rgba(0,0,0,.45);
+    --font:'Segoe UI',system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--text); font-family:var(--font);
+    min-height:100vh; display:flex; flex-direction:column;
+    background-image:
+      radial-gradient(900px 420px at 15% -10%, rgba(56,189,248,.10), transparent 60%),
+      radial-gradient(700px 380px at 90% -5%, rgba(167,139,250,.08), transparent 60%);
+    background-attachment:fixed;
+  }
+  a{color:var(--cyan);text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  img{display:block;max-width:100%}
+  input,textarea,select{font-family:inherit}
+
+  /* ---------- header ---------- */
+  header{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    background:rgba(9,13,22,.82); border-bottom:1px solid var(--line);
+  }
+  .hdr-inner{
+    max-width:1200px;margin:0 auto;padding:10px 18px;
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+  .brand-mark{
+    width:38px;height:38px;border-radius:11px;flex:none;
+    background:linear-gradient(135deg,#0e2a44,#0a1526);
+    border:1px solid var(--cyan-dim);
+    display:grid;place-items:center;font-weight:800;font-size:15px;color:var(--cyan);
+    letter-spacing:.5px;box-shadow:0 0 18px rgba(56,189,248,.25);
+  }
+  .brand-name{font-weight:800;font-size:16px;letter-spacing:.4px;line-height:1.05}
+  .brand-name small{display:block;font-weight:600;font-size:10px;color:var(--cyan);letter-spacing:2.5px}
+  .searchbox{
+    flex:1;min-width:180px;max-width:380px;position:relative;
+  }
+  .searchbox input{
+    width:100%;background:var(--bg3);border:1px solid var(--line);color:var(--text);
+    padding:9px 14px 9px 36px;border-radius:999px;font-size:13.5px;outline:none;
+    transition:border-color .15s;
+  }
+  .searchbox input:focus{border-color:var(--cyan-dim)}
+  .searchbox::before{
+    content:'🔍';position:absolute;left:12px;top:50%;transform:translateY(-50%);
+    font-size:13px;opacity:.7;
+  }
+  nav{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+  .navbtn{
+    background:transparent;border:1px solid transparent;color:var(--muted);
+    padding:9px 15px;border-radius:999px;font-size:13.5px;font-weight:600;
+    transition:all .15s;white-space:nowrap;
+  }
+  .navbtn:hover{color:var(--text);background:var(--bg3)}
+  .navbtn.active{color:#071019;background:var(--cyan);border-color:var(--cyan)}
+  .navbtn.accent{color:var(--cyan);border-color:var(--cyan-dim)}
+  .navbtn.accent:hover{background:rgba(56,189,248,.12);color:var(--cyan)}
+
+  /* ---------- layout ---------- */
+  main{flex:1;width:100%;max-width:1200px;margin:0 auto;padding:22px 18px 60px}
+  .view{display:none}
+  .view.active{display:block;animation:fadeUp .28s ease}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;overflow:hidden;border-radius:22px;
+    border:1px solid var(--line);padding:38px 34px;margin-bottom:26px;
+    background:
+      linear-gradient(120deg, rgba(14,42,68,.95), rgba(13,18,34,.92) 55%, rgba(17,26,46,.92)),
+      url('assets/img/product-dragon.webp') center/cover no-repeat;
+  }
+  .hero::after{
+    content:'';position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(600px 260px at 85% 20%, rgba(56,189,248,.14), transparent 65%);
+  }
+  .hero-inner{position:relative;z-index:1;max-width:640px}
+  .hero-tag{
+    display:inline-flex;align-items:center;gap:7px;
+    background:rgba(56,189,248,.12);border:1px solid var(--cyan-dim);
+    color:var(--cyan);font-size:11.5px;font-weight:700;letter-spacing:1.6px;
+    padding:5px 12px;border-radius:999px;margin-bottom:16px;
+  }
+  .hero h1{font-size:clamp(26px,4.4vw,40px);line-height:1.12;margin-bottom:12px;font-weight:800}
+  .hero h1 span{color:var(--cyan)}
+  .hero p{color:var(--muted);font-size:15px;line-height:1.6;margin-bottom:22px;max-width:540px}
+  .hero-cta{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--cyan);color:#071019;border:none;
+    padding:11px 20px;border-radius:999px;font-size:14px;font-weight:700;
+    transition:transform .12s, box-shadow .12s;
+  }
+  .btn:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(56,189,248,.35)}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line2)}
+  .btn.ghost:hover{box-shadow:none;border-color:var(--cyan-dim);color:var(--cyan)}
+  .btn.small{padding:7px 14px;font-size:12.5px}
+  .hero-stats{
+    display:flex;gap:26px;margin-top:26px;flex-wrap:wrap;
+  }
+  .hero-stats .stat b{display:block;font-size:22px;color:var(--text)}
+  .hero-stats .stat span{font-size:11.5px;color:var(--faint);letter-spacing:1.2px;text-transform:uppercase}
+
+  /* ---------- toolbar ---------- */
+  .toolbar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{
+    background:var(--bg3);border:1px solid var(--line);color:var(--muted);
+    padding:7px 15px;border-radius:999px;font-size:12.5px;font-weight:600;
+    transition:all .15s;
+  }
+  .chip:hover{color:var(--text);border-color:var(--line2)}
+  .chip.active{background:var(--cyan);color:#071019;border-color:var(--cyan)}
+  .sort{display:flex;gap:6px;margin-left:auto;align-items:center}
+  .sort label{font-size:12px;color:var(--faint);margin-right:2px}
+  .sort select{
+    background:var(--bg3);border:1px solid var(--line);color:var(--text);
+    padding:7px 10px;border-radius:9px;font-size:12.5px;outline:none;
+  }
+
+  /* ---------- grid ---------- */
+  .layout{display:grid;grid-template-columns:1fr 300px;gap:22px;align-items:start}
+  @media(max-width:960px){.layout{grid-template-columns:1fr}}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(218px,1fr));gap:16px}
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    overflow:hidden;cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s;
+    display:flex;flex-direction:column;
+  }
+  .card:hover{transform:translateY(-3px);border-color:var(--cyan-dim);box-shadow:var(--shadow)}
+  .card-thumb{
+    position:relative;aspect-ratio:1/1;background:var(--bg3);overflow:hidden;
+  }
+  .card-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .35s}
+  .card:hover .card-thumb img{transform:scale(1.05)}
+  .badge{
+    position:absolute;top:9px;left:9px;font-size:10px;font-weight:700;letter-spacing:.8px;
+    padding:4px 9px;border-radius:999px;backdrop-filter:blur(6px);
+  }
+  .badge.store{background:rgba(56,189,248,.9);color:#071019}
+  .badge.community{background:rgba(167,139,250,.92);color:#1a1035}
+  .badge.pending{background:rgba(251,191,36,.92);color:#3a2a05}
+  .badge.new{background:rgba(74,222,128,.92);color:#06210f}
+  .card-3d{
+    position:absolute;bottom:9px;right:9px;font-size:10px;font-weight:700;
+    background:rgba(9,13,22,.75);color:var(--cyan);border:1px solid var(--cyan-dim);
+    padding:4px 8px;border-radius:999px;backdrop-filter:blur(6px);
+  }
+  .card-body{padding:12px 13px 13px;display:flex;flex-direction:column;gap:7px;flex:1}
+  .card-title{font-size:13.5px;font-weight:700;line-height:1.3}
+  .card-meta{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--faint)}
+  .card-meta .maker{color:var(--muted);font-weight:600}
+  .card-stats{display:flex;gap:12px;margin-top:auto;font-size:11.5px;color:var(--faint)}
+  .card-stats span{display:inline-flex;align-items:center;gap:4px}
+
+  /* ---------- rail ---------- */
+  .rail{display:flex;flex-direction:column;gap:16px;position:sticky;top:76px}
+  @media(max-width:960px){.rail{position:static}}
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px;
+  }
+  .panel h3{
+    font-size:12px;letter-spacing:1.8px;text-transform:uppercase;color:var(--faint);
+    margin-bottom:12px;display:flex;align-items:center;gap:8px;
+  }
+  .panel h3::after{content:'';flex:1;height:1px;background:var(--line)}
+  .postbox textarea{
+    width:100%;background:var(--bg3);border:1px solid var(--line);color:var(--text);
+    border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;resize:vertical;
+    min-height:64px;outline:none;
+  }
+  .postbox textarea:focus{border-color:var(--cyan-dim)}
+  .postbox .row{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+  .postbox input{
+    background:var(--bg3);border:1px solid var(--line);color:var(--text);
+    border-radius:9px;padding:7px 11px;font-size:12.5px;outline:none;flex:1;margin-right:8px;
+  }
+  .posts{display:flex;flex-direction:column;gap:12px;max-height:280px;overflow-y:auto;padding-right:4px}
+  .post{display:flex;gap:10px}
+  .post .avatar{
+    width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;
+    font-size:12px;font-weight:800;color:#071019;
+  }
+  .post .who{font-size:11.5px;font-weight:700}
+  .post .when{font-size:10.5px;color:var(--faint);margin-left:6px}
+  .post .what{font-size:12.5px;color:var(--muted);line-height:1.45;margin-top:2px;word-break:break-word}
+  .mini-item{display:flex;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line);cursor:pointer}
+  .mini-item:last-child{border-bottom:none}
+  .mini-item img{width:44px;height:44px;border-radius:8px;object-fit:cover;flex:none}
+  .mini-item .t{font-size:12.5px;font-weight:600;line-height:1.3}
+  .mini-item .m{font-size:11px;color:var(--faint);margin-top:2px}
+  .lab-status-card{
+    border:1px dashed var(--cyan-dim);background:linear-gradient(160deg,rgba(56,189,248,.07),transparent);
+  }
+  .lab-status-card .status-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .dot.on{background:var(--green);box-shadow:0 0 8px var(--green)}
+  .dot.off{background:var(--faint)}
+  .dot.soon{background:var(--amber);box-shadow:0 0 8px var(--amber)}
+  .lab-status-card .status-row b{font-size:13px}
+  .lab-status-card .status-row span{margin-left:auto;font-size:11px;color:var(--faint)}
+
+  /* ---------- item detail ---------- */
+  .detail-top{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+  .back{background:var(--bg3);border:1px solid var(--line);color:var(--text);padding:8px 16px;border-radius:999px;font-size:13px;font-weight:600}
+  .back:hover{border-color:var(--cyan-dim);color:var(--cyan)}
+  .detail-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:24px}
+  @media(max-width:860px){.detail-grid{grid-template-columns:1fr}}
+  .detail-media{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    overflow:hidden;min-height:340px;display:grid;place-items:center;position:relative;
+  }
+  .detail-media img{width:100%;height:100%;object-fit:contain;max-height:520px}
+  .detail-media model-viewer{width:100%;height:520px}
+  .detail-info h1{font-size:clamp(20px,3vw,28px);margin-bottom:8px;line-height:1.2}
+  .detail-info .byline{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+  .detail-info .byline .avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#071019;font-size:13px}
+  .detail-info .byline .who{font-weight:700;font-size:14px}
+  .detail-info .byline .when{font-size:12px;color:var(--faint)}
+  .action-row{display:flex;gap:10px;margin:16px 0;flex-wrap:wrap}
+  .stat-pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .pill{background:var(--bg3);border:1px solid var(--line);border-radius:999px;padding:6px 13px;font-size:12.5px;color:var(--muted);display:inline-flex;gap:6px;align-items:center}
+  .pill b{color:var(--text)}
+  .desc{background:var(--bg3);border:1px solid var(--line);border-radius:var(--radius-sm);padding:14px 16px;font-size:13.5px;line-height:1.65;color:var(--muted);margin-bottom:18px;white-space:pre-wrap}
+  .tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:22px}
+  .tag{background:rgba(56,189,248,.08);border:1px solid var(--line);color:var(--cyan);padding:4px 11px;border-radius:999px;font-size:11.5px;font-weight:600}
+  .comments h3{font-size:14px;margin-bottom:12px;color:var(--muted)}
+  .comment{display:flex;gap:10px;margin-bottom:14px}
+  .comment .avatar{width:28px;height:28px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:11px;font-weight:800;color:#071019}
+  .comment .bubble{background:var(--bg3);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:9px 13px;flex:1}
+  .comment .who{font-size:12px;font-weight:700}
+  .comment .when{font-size:10.5px;color:var(--faint);margin-left:7px}
+  .comment .what{font-size:13px;color:var(--muted);margin-top:3px;line-height:1.5}
+  .comment-form{display:flex;gap:8px;margin-top:14px}
+  .comment-form input{
+    flex:1;background:var(--bg3);border:1px solid var(--line);color:var(--text);
+    padding:10px 14px;border-radius:999px;font-size:13px;outline:none;
+  }
+  .comment-form input:focus{border-color:var(--cyan-dim)}
+  .btn.liked{background:#0e2a44;color:var(--cyan);border:1px solid var(--cyan-dim)}
+
+  /* ---------- upload ---------- */
+  .upload-wrap{max-width:720px;margin:0 auto}
+  .upload-wrap h1{font-size:26px;margin-bottom:6px}
+  .upload-wrap .sub{color:var(--muted);font-size:14px;margin-bottom:22px}
+  .dropzone{
+    border:2px dashed var(--line2);border-radius:var(--radius);
+    background:var(--bg3);padding:42px 24px;text-align:center;cursor:pointer;
+    transition:all .15s;margin-bottom:20px;
+  }
+  .dropzone:hover,.dropzone.drag{border-color:var(--cyan);background:rgba(56,189,248,.05)}
+  .dropzone .big{font-size:38px;margin-bottom:8px}
+  .dropzone b{font-size:15px}
+  .dropzone p{color:var(--faint);font-size:12.5px;margin-top:6px}
+  .dropzone img.preview{
+    max-height:280px;margin:14px auto 6px;border-radius:12px;border:1px solid var(--line2);
+  }
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:7px;letter-spacing:.4px}
+  .field input,.field textarea,.field select{
+    width:100%;background:var(--bg3);border:1px solid var(--line);color:var(--text);
+    border-radius:var(--radius-sm);padding:11px 14px;font-size:14px;outline:none;
+  }
+  .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--cyan-dim)}
+  .field textarea{resize:vertical;min-height:90px}
+  .field .hint{font-size:11.5px;color:var(--faint);margin-top:5px}
+  .upload-actions{display:flex;gap:10px;align-items:center;margin-top:22px}
+  .fineprint{font-size:11.5px;color:var(--faint);margin-top:14px;line-height:1.5}
+
+  /* ---------- lab (2D → 3D) ---------- */
+  .lab-wrap{max-width:900px;margin:0 auto}
+  .lab-wrap h1{font-size:26px;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+  .lab-wrap .sub{color:var(--muted);font-size:14px;margin-bottom:20px;line-height:1.6}
+  .engine-banner{
+    display:flex;align-items:center;gap:12px;border-radius:var(--radius);
+    padding:13px 16px;margin-bottom:20px;font-size:13px;
+    background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.35);color:#fcd34d;
+  }
+  .engine-banner.on{background:rgba(74,222,128,.07);border-color:rgba(74,222,128,.4);color:#86efac}
+  .lab-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:760px){.lab-grid{grid-template-columns:1fr}}
+  .lab-drop{
+    border:2px dashed var(--line2);border-radius:var(--radius);background:var(--bg3);
+    padding:36px 22px;text-align:center;cursor:pointer;transition:all .15s;
+    min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  }
+  .lab-drop:hover,.lab-drop.drag{border-color:var(--cyan);background:rgba(56,189,248,.05)}
+  .lab-drop .big{font-size:42px}
+  .lab-drop b{font-size:15px}
+  .lab-drop p{color:var(--faint);font-size:12.5px}
+  .lab-drop kbd{
+    background:var(--bg);border:1px solid var(--line2);border-bottom-width:2px;
+    border-radius:6px;padding:2px 8px;font-size:11.5px;color:var(--muted);font-family:inherit;
+  }
+  .lab-drop img.preview{max-width:100%;max-height:210px;border-radius:12px;border:1px solid var(--line2);margin-top:6px}
+  .lab-out{
+    border-radius:var(--radius);border:1px solid var(--line);background:var(--card);
+    display:flex;flex-direction:column;overflow:hidden;min-height:300px;
+  }
+  .lab-out .head{
+    padding:11px 16px;border-bottom:1px solid var(--line);font-size:12px;letter-spacing:1.6px;
+    text-transform:uppercase;color:var(--faint);display:flex;align-items:center;gap:9px;
+  }
+  .lab-out .stage{flex:1;display:grid;place-items:center;padding:22px;text-align:center}
+  .lab-out .stage.empty .icon{font-size:44px;opacity:.5;margin-bottom:10px}
+  .lab-out .stage.empty p{color:var(--faint);font-size:13px;line-height:1.6;max-width:300px}
+  .lab-out .stage model-viewer{width:100%;height:420px}
+  .lab-out .stage .spin{width:26px;height:26px;border:3px solid var(--line2);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .lab-slot{
+    margin-top:20px;border:1px dashed var(--cyan-dim);border-radius:var(--radius);
+    background:linear-gradient(160deg,rgba(56,189,248,.06),transparent);padding:18px;
+  }
+  .lab-slot h3{font-size:13px;letter-spacing:1.4px;text-transform:uppercase;color:var(--cyan);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .lab-slot p{font-size:13px;color:var(--muted);line-height:1.6}
+  .lab-slot pre{
+    margin-top:12px;background:#05080f;border:1px solid var(--line);border-radius:var(--radius-sm);
+    padding:14px 16px;font-size:12px;line-height:1.6;overflow-x:auto;color:#9fd7f5;
+  }
+  .lab-slot code{font-family:Consolas,'Courier New',monospace}
+  details.slot-details{margin-top:12px}
+  details.slot-details summary{
+    cursor:pointer;font-size:12.5px;color:var(--cyan);font-weight:600;user-select:none;
+  }
+
+  /* ---------- footer / toast / empty ---------- */
+  footer{
+    border-top:1px solid var(--line);padding:26px 18px;text-align:center;
+    color:var(--faint);font-size:12.5px;
+  }
+  footer a{color:var(--muted)}
+  #toast{
+    position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(90px);
+    background:#0e2a44;border:1px solid var(--cyan-dim);color:var(--text);
+    padding:12px 22px;border-radius:999px;font-size:13.5px;font-weight:600;
+    box-shadow:var(--shadow);z-index:100;transition:transform .3s ease;max-width:90vw;text-align:center;
+  }
+  #toast.show{transform:translateX(-50%) translateY(0)}
+  .empty-state{text-align:center;padding:60px 20px;color:var(--faint)}
+  .empty-state .icon{font-size:44px;margin-bottom:12px}
+  .empty-state b{display:block;color:var(--muted);font-size:15px;margin-bottom:6px}
+  .hl{outline:2px solid var(--cyan);outline-offset:-2px}
+  ::-webkit-scrollbar{width:9px;height:9px}
+  ::-webkit-scrollbar-thumb{background:var(--line2);border-radius:99px}
+  ::-webkit-scrollbar-track{background:transparent}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-inner">
+    <div class="brand" id="brandBtn" title="Tommy Labs Maker Catalog">
+      <div class="brand-mark">TL</div>
+      <div class="brand-name">TOMMY LABS<small>MAKER CATALOG</small></div>
+    </div>
+    <div class="searchbox">
+      <input id="searchInput" type="search" placeholder="Search the catalog…" autocomplete="off">
+    </div>
+    <nav>
+      <button class="navbtn active" data-nav="home">Home</button>
+      <button class="navbtn" data-nav="upload">Upload idea</button>
+      <button class="navbtn accent" data-nav="lab">2D → 3D Lab</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ================= HOME ================= -->
+  <section class="view active" id="view-home">
+    <div class="hero">
+      <div class="hero-inner">
+        <div class="hero-tag">⚡ THE MAKER COMMUNITY OF TOMMY LABS</div>
+        <h1>Browse. Share. <span>Print.</span><br>Ideas for your next build.</h1>
+        <p>This is the hangout for everything Tommy Labs — scroll the catalog for fresh ideas, drop your own designs for the community, and when the 2D→3D engine lands, turn a plain picture into a print-ready model right here.</p>
+        <div class="hero-cta">
+          <button class="btn" data-nav="upload">🚀 Upload your idea</button>
+          <button class="btn ghost" data-nav="lab">🧪 Try the 2D → 3D Lab</button>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><b id="statItems">0</b><span>Ideas</span></div>
+          <div class="stat"><b id="statMakers">0</b><span>Makers</span></div>
+          <div class="stat"><b id="statLikes">0</b><span>Likes</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="chips" id="catChips"></div>
+      <div class="sort">
+        <label>Sort</label>
+        <select id="sortSel">
+          <option value="new">Newest</option>
+          <option value="pop">Most liked</option>
+          <option value="prints">Most printed</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="layout">
+      <div class="grid" id="itemGrid"></div>
+      <aside class="rail">
+        <div class="panel lab-status-card">
+          <h3>2D → 3D Lab</h3>
+          <div class="status-row">
+            <span class="dot off" id="labDot"></span>
+            <b id="labStatusText">Engine slot ready</b>
+            <span id="labStatusState">standby</span>
+          </div>
+          <button class="btn small" data-nav="lab" style="width:100%;justify-content:center">Open the Lab</button>
+        </div>
+
+        <div class="panel">
+          <h3>🛠 The Workbench</h3>
+          <div class="postbox">
+            <textarea id="postText" placeholder="Hang out — say what you're printing…"></textarea>
+            <div class="row">
+              <input id="postName" placeholder="Your name" maxlength="24">
+              <button class="btn small" id="postBtn">Post</button>
+            </div>
+          </div>
+          <div class="posts" id="postList" style="margin-top:14px"></div>
+        </div>
+
+        <div class="panel">
+          <h3>🔥 Fresh uploads</h3>
+          <div id="freshList"></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ================= ITEM DETAIL ================= -->
+  <section class="view" id="view-item">
+    <div class="detail-top">
+      <button class="back" id="itemBack">← Back to catalog</button>
+    </div>
+    <div id="itemDetail"></div>
+  </section>
+
+  <!-- ================= UPLOAD ================= -->
+  <section class="view" id="view-upload">
+    <div class="upload-wrap">
+      <h1>🚀 Upload an idea</h1>
+      <p class="sub">Share a design, a sketch, or a photo of something you want printed. Community uploads land in the catalog as <b style="color:var(--purple)">Community</b> items and show as pending until Tommy's crew checks them out.</p>
+
+      <div class="dropzone" id="upDrop">
+        <div class="big">🖼️</div>
+        <b>Drop an image here or click to browse</b>
+        <p>PNG / JPG / WebP — max ~8 MB. We shrink it automatically.<br>No image? You can still post a text-only idea below.</p>
+        <img class="preview" id="upPreview" style="display:none" alt="preview">
+      </div>
+      <input type="file" id="upFile" accept="image/*" hidden>
+
+      <div class="field">
+        <label>Title *</label>
+        <input id="upTitle" maxlength="80" placeholder="e.g. Articulated dragon keychain">
+      </div>
+      <div class="field">
+        <label>Category</label>
+        <select id="upCat">
+          <option>Figurines</option>
+          <option>Dragons</option>
+          <option>Owls</option>
+          <option>Masks &amp; Busts</option>
+          <option>Home &amp; Utility</option>
+          <option>Fans &amp; Cosplay</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Describe your idea</label>
+        <textarea id="upDesc" maxlength="600" placeholder="What is it? Rough size? What filament colors would look good? Anything helps the community and the print crew…"></textarea>
+      </div>
+      <div class="field">
+        <label>Tags</label>
+        <input id="upTags" maxlength="120" placeholder="comma, separated, tags">
+      </div>
+      <div class="field">
+        <label>Your name</label>
+        <input id="upName" maxlength="24" placeholder="Maker name">
+      </div>
+
+      <div class="upload-actions">
+        <button class="btn" id="upSubmit">Publish to catalog</button>
+        <span class="hint" id="upNote">Stored in this browser for now — the live backend hooks up later.</span>
+      </div>
+      <p class="fineprint">By publishing you agree this is your own idea or you have permission to share it. Tommy Labs may feature great community ideas in the store. No files leave your browser while this preview runs — the engine slot is where the real pipeline plugs in.</p>
+    </div>
+  </section>
+
+  <!-- ================= 2D → 3D LAB ================= -->
+  <section class="view" id="view-lab">
+    <div class="lab-wrap">
+      <h1>🧪 The 2D → 3D Lab</h1>
+      <p class="sub">Paste or drop a picture and this slot turns it into a 3D model for printing. The engine isn't installed yet — the slot is wired and waiting, so the moment Tommy plugs in the engine, this page goes live with zero changes to the rest of the site.</p>
+
+      <div class="engine-banner" id="engineBanner">
+        <span>🟡</span><span><b>Engine slot ready — no engine installed yet.</b> Paste a picture below anyway to try the flow; the moment the engine is configured the result appears in the viewer on the right.</span>
+      </div>
+
+      <div class="lab-grid">
+        <div class="lab-drop" id="labDrop">
+          <div class="big">📸</div>
+          <b>Paste or drop a 2D picture</b>
+          <p>Ctrl/⌘ + V works right after clicking here.<br>Any photo, sketch, or reference of what you want printed.</p>
+          <p><kbd>Ctrl</kbd> + <kbd>V</kbd></p>
+          <img class="preview" id="labPreview" style="display:none" alt="2d input">
+        </div>
+        <input type="file" id="labFile" accept="image/*" hidden>
+
+        <div class="lab-out">
+          <div class="head"><span class="dot soon" id="outDot"></span> 3D output</div>
+          <div class="stage empty" id="labStage">
+            <div>
+              <div class="icon">🛠️</div>
+              <p>Drop a picture on the left and the generated 3D model will appear here — ready to spin, inspect, and hand to the printer.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lab-slot">
+        <h3>⚙️ ENGINE SLOT — INSTALL PANEL</h3>
+        <p>This is the integration point. Configure one object and the Lab goes live for everyone. The engine just needs to accept a 2D image and hand back a printable <code>.glb</code> model URL.</p>
+        <pre id="slotCode"></pre>
+        <details class="slot-details">
+          <summary>How to install the engine (for the crew with credentials)</summary>
+          <p style="margin-top:10px">Open <code>catalog/index.html</code>, find the block labeled <code>TOMMY_3D_ENGINE</code> at the top of the script, and fill in your engine's endpoint. Contract: <code>POST { image: &lt;dataURL&gt;, prompt: &lt;text&gt; }</code> → <code>{ modelUrl: "https://…/model.glb" }</code>. The Lab already renders any returned GLB in the viewer and falls back gracefully when the slot is empty.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>© 2026 <a href="https://tommylabs.store" target="_blank" rel="noopener">Tommy Labs</a> — 3D printed creations by Tommy Scruggs · <a href="https://tommylabs.store" target="_blank" rel="noopener">Visit the store</a></p>
+  <p style="margin-top:5px">Catalog is community-powered — everything lives in your browser while the backend is being built.</p>
+</footer>
+
+<div id="toast"></div>
+
+<script src="vendor/model-viewer.min.js" type="module"></script>
+<script>
+/* ============================================================
+   TOMMY_3D_ENGINE — THE 2D→3D ENGINE SLOT. INSTALL HERE.
+   ------------------------------------------------------------
+   When the engine is ready, fill in `endpoint` (and `apiKey` if
+   needed) and the Lab goes live for everyone. No other changes
+   needed — the Lab reads this object on every run.
+
+   Contract:
+     POST endpoint
+     body: { image: "<dataURL jpeg>", prompt: "<optional text>" }
+     response: { modelUrl: "https://…/result.glb" }
+
+   The response can also be a bare URL string. Anything else →
+   the Lab shows a clear error instead of breaking.
+   ============================================================ */
+window.TOMMY_3D_ENGINE = {
+  endpoint: null,   // e.g. "https://engine.example.com/v1/img2mesh"
+  apiKey: null,     // leave null if the engine is public
+  prompt: ""        // optional default prompt sent with the image
+};
+
+/* ============================================================
+   CATALOG DATA
+   ============================================================ */
+const STORE_GLB_BASE = "https://tommylabs.store/models-webp/";
+const LS_ITEMS = "tlc.items.v1";
+const LS_POSTS = "tlc.posts.v1";
+const AVATAR_COLORS = ["#38bdf8","#a78bfa","#4ade80","#fbbf24","#f87171","#22d3ee","#f472b6","#fb923c"];
+
+const CATEGORIES = ["All","Figurines","Dragons","Owls","Masks & Busts","Home & Utility","Fans & Cosplay","Other"];
+
+const SEED = [
+  {id:"s-batman",   title:"Batman Cowl — wearable",       maker:"Tommy Scruggs", source:"store", cat:"Masks & Busts", img:"assets/img/product-batman-cowl-v2.webp", glb:"batman.glb", likes:412, prints:186, added:"2026-08-10", tags:["batman","mask","wearable","hero"], desc:"The signature cowl. Sized to fit, with clean inner geometry so it prints fast without supports on most beds. A Tommy Labs original."},
+  {id:"s-dragon",   title:"Dragon — display piece",        maker:"Tommy Scruggs", source:"store", cat:"Dragons", img:"assets/img/product-dragon.webp", glb:"dragon.glb", likes:528, prints:243, added:"2026-08-08", tags:["dragon","fantasy","display"], desc:"Big, mean, and heavily detailed. Prints in parts for easy post-processing. A community favourite from day one."},
+  {id:"s-tiger",    title:"Tiger bust",                    maker:"Tommy Scruggs", source:"store", cat:"Figurines", img:"assets/img/product-tiger-v2.webp", glb:"tiger.glb", likes:391, prints:154, added:"2026-08-06", tags:["tiger","bust","animal"], desc:"Fierce tiger bust with layered mane detail. Looks great in matte black or a bronze silk."},
+  {id:"s-wolf",     title:"Wolf of Winter ashtray",        maker:"Tommy Scruggs", source:"store", cat:"Figurines", img:"assets/img/product-wolf-of-winter-ashtray-fierce-v2.webp", likes:274, prints:198, added:"2026-08-05", tags:["wolf","ashtray","utility"], desc:"A howling wolf ashtray that doubles as a desk ornament. One of the most-printed pieces in the store."},
+  {id:"s-owlbowl",  title:"Black owl bowl",                maker:"Tommy Scruggs", source:"store", cat:"Owls", img:"assets/img/product-black-owl-bowl-v2.webp", glb:"owl.glb", likes:319, prints:167, added:"2026-08-03", tags:["owl","bowl","home"], desc:"Owl-shaped catch-all bowl. Feathered texture reads beautifully in silk filaments."},
+  {id:"s-mando",    title:"Charcoal Mandalorian",          maker:"Tommy Scruggs", source:"store", cat:"Fans & Cosplay", img:"assets/img/product-charcoal-mandalorian-v2.webp", likes:356, prints:121, added:"2026-08-01", tags:["mandalorian","starwars","bust"], desc:"Charcoal-finish Mandalorian bust. All the beskar energy, none of the jetpack."},
+  {id:"s-eagle",    title:"Charcoal eagle",                maker:"Tommy Scruggs", source:"store", cat:"Figurines", img:"assets/img/product-charcoal-eagle-v2.webp", likes:208, prints:89, added:"2026-07-29", tags:["eagle","bird","display"], desc:"Soaring eagle with spread wings. Wing profile is tuned for a clean single-part print."},
+  {id:"s-reaper",   title:"Death Reaper",                  maker:"Tommy Scruggs", source:"store", cat:"Figurines", img:"assets/img/product-death-reaper-v2.webp", likes:267, prints:102, added:"2026-07-27", tags:["reaper","skull","gothic"], desc:"The Reaper. Hooded, scythe-ready, shelf-worthy. Prints beautifully in glow-in-the-dark PLA."},
+  {id:"s-goldowl",  title:"Golden owl",                    maker:"Tommy Scruggs", source:"store", cat:"Owls", img:"assets/img/product-owl-golden-v2.webp", likes:233, prints:95, added:"2026-07-25", tags:["owl","gold","display"], desc:"Regal golden owl — the centrepiece of the owl collection."},
+  {id:"s-trex",     title:"T-Rex skeleton",                maker:"Tommy Scruggs", source:"store", cat:"Figurines", img:"assets/img/product-trex-v2.webp", likes:301, prints:133, added:"2026-07-23", tags:["t-rex","dino","skeleton"], desc:"Mini T-Rex with poseable head. Kid-approved, desk-tested."},
+  {id:"s-castle",   title:"Purple dragon castle",          maker:"Tommy Scruggs", source:"store", cat:"Dragons", img:"assets/img/product-purple-dragon-castle-v2.webp", likes:188, prints:77, added:"2026-07-21", tags:["dragon","castle","fantasy"], desc:"A purple dragon coiled around a castle tower. Fairy-tale shelf energy."},
+  {id:"s-stag",     title:"Stag cup",                      maker:"Tommy Scruggs", source:"store", cat:"Home & Utility", img:"assets/img/product-stag-cup-v2.webp", likes:156, prints:64, added:"2026-07-19", tags:["stag","cup","drinkware"], desc:"Stag-horned cup with a comfortable grip. Dishwasher-friendly finish."},
+  {id:"c-plant",    title:"Succulent planter skull",       maker:"Maria K.", source:"community", cat:"Home & Utility", likes:34, prints:12, added:"2026-08-14", status:"live", tags:["planter","skull","succulent"], desc:"A mini skull planter for succulents — holes in the back for drainage. Would love feedback on wall thickness!",
+    svg:{g1:"#2dd4bf",g2:"#0e7490",e:"🪴"}},
+  {id:"c-pen",      title:"Dragon pencil holder",          maker:"Devon R.", source:"community", cat:"Dragons", likes:27, prints:9, added:"2026-08-12", status:"live", tags:["pencil","desk","dragon"], desc:"A coiled dragon that holds pens and pencils. The tail curls around the base so it stays put.",
+    svg:{g1:"#a78bfa",g2:"#6d28d9",e:"✏️"}},
+  {id:"c-phone",    title:"Wave phone stand",              maker:"Jules T.", source:"community", cat:"Home & Utility", likes:19, prints:6, added:"2026-08-15", status:"pending", tags:["phone","stand","wave"], desc:"A wave-shaped phone stand. The curve props any phone at a good angle for video calls.",
+    svg:{g1:"#38bdf8",g2:"#0369a1",e:"📱"}},
+  {id:"c-key",      title:"Hex keychain set",              maker:"Sam P.", source:"community", cat:"Other", likes:12, prints:4, added:"2026-08-13", status:"pending", tags:["keychain","hex","minimal"], desc:"A set of hex-shaped keychains — print them in different colors and trade them.",
+    svg:{g1:"#fbbf24",g2:"#b45309",e:"🔑"}},
+];
+
+/* ============================================================
+   STATE + STORAGE
+   ============================================================ */
+let state = {
+  items: load(LS_ITEMS) || null,
+  posts: load(LS_POSTS) || null,
+  cat: "All",
+  sort: "new",
+  query: "",
+  labImg: null,
+  labBusy: false,
+};
+if (!state.items) { state.items = JSON.parse(JSON.stringify(SEED)); persist(); }
+if (!state.posts) { state.posts = []; persist(); }
+
+function load(k){ try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } }
+function persist(){ try { localStorage.setItem(LS_ITEMS, JSON.stringify(state.items)); localStorage.setItem(LS_POSTS, JSON.stringify(state.posts)); } catch(e){} }
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const timeAgo = iso => {
+  const d = new Date(iso).getTime(); if (isNaN(d)) return "";
+  const s = Math.floor((Date.now()-d)/1000);
+  if (s < 60) return "just now";
+  if (s < 3600) return Math.floor(s/60)+"m ago";
+  if (s < 86400) return Math.floor(s/3600)+"h ago";
+  return Math.floor(s/86400)+"d ago";
+};
+const avatarColor = name => AVATAR_COLORS[[...String(name||"")].reduce((a,c)=>a+c.charCodeAt(0),0) % AVATAR_COLORS.length];
+const avatarHtml = (name,size) => `<span class="avatar" style="width:${size}px;height:${size}px;font-size:${Math.round(size*.38)}px;background:${avatarColor(name)}">${esc((name||"?").trim()[0]?.toUpperCase()||"?")}</span>`;
+
+/* SVG thumbnails for community items (no image file needed) */
+function svgThumb(it){
+  const g1 = it.svg.g1, g2 = it.svg.g2, e = it.svg.e;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${g1}"/><stop offset="1" stop-color="${g2}"/></linearGradient></defs><rect width="600" height="600" fill="url(#g)"/><rect width="600" height="600" fill="rgba(9,13,22,.35)"/><text x="300" y="350" font-size="180" text-anchor="middle">${e}</text><text x="300" y="520" font-size="44" text-anchor="middle" font-family="Arial" font-weight="bold" fill="rgba(255,255,255,.85)">${esc(it.title.slice(0,26))}</text></svg>`;
+  return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+}
+function itemImg(it){
+  if (it.svg) return svgThumb(it);
+  if (it.img && it.img !== "null") return it.img;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1d3a5f"/><stop offset="1" stop-color="#0d1322"/></linearGradient></defs><rect width="600" height="600" fill="url(#g)"/><text x="300" y="340" font-size="170" text-anchor="middle">🧠</text><text x="300" y="520" font-size="42" text-anchor="middle" font-family="Arial" font-weight="bold" fill="rgba(255,255,255,.8)">${esc((it.title||"Idea").slice(0,26))}</text></svg>`;
+  return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+}
+
+/* ============================================================
+   ROUTER
+   ============================================================ */
+const routes = {
+  "": "home",
+  "home": "home",
+  "upload": "upload",
+  "lab": "lab",
+  "item": "item",
+};
+function parseHash(){
+  const h = location.hash.replace(/^#\/?/, "");
+  const [name, param] = h.split("/");
+  return { name: routes[name] || "home", param: decodeURIComponent(param || "") };
+}
+function go(route, param){
+  location.hash = "#/" + route + (param ? "/" + encodeURIComponent(param) : "");
+}
+function render(){
+  const { name, param } = parseHash();
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+  document.querySelectorAll(".navbtn").forEach(b => b.classList.remove("active"));
+  if (name === "item") {
+    $("#view-item").classList.add("active");
+    renderItem(param);
+  } else {
+    $("#view-" + name).classList.add("active");
+    document.querySelector(`.navbtn[data-nav="${name}"]`)?.classList.add("active");
+    if (name === "home") renderHome();
+    if (name === "upload") renderUpload();
+    if (name === "lab") renderLab();
+  }
+  window.scrollTo({ top: 0 });
+}
+window.addEventListener("hashchange", render);
+
+/* ============================================================
+   HOME
+   ============================================================ */
+function filtered(){
+  let list = [...state.items];
+  if (state.cat !== "All") list = list.filter(i => i.cat === state.cat);
+  if (state.query) {
+    const q = state.query.toLowerCase();
+    list = list.filter(i => (i.title + " " + i.maker + " " + (i.tags||[]).join(" ") + " " + i.desc).toLowerCase().includes(q));
+  }
+  if (state.sort === "pop") list.sort((a,b) => b.likes - a.likes);
+  else if (state.sort === "prints") list.sort((a,b) => b.prints - a.prints);
+  else list.sort((a,b) => new Date(b.added) - new Date(a.added));
+  return list;
+}
+function renderHome(){
+  /* stats */
+  $("#statItems").textContent = state.items.length;
+  $("#statMakers").textContent = new Set(state.items.map(i => i.maker)).size;
+  $("#statLikes").textContent = state.items.reduce((a,i) => a + i.likes, 0).toLocaleString();
+
+  /* chips */
+  $("#catChips").innerHTML = CATEGORIES.map(c =>
+    `<button class="chip ${state.cat===c?"active":""}" data-cat="${esc(c)}">${esc(c)}</button>`).join("");
+  document.querySelectorAll("[data-cat]").forEach(ch => ch.onclick = () => { state.cat = ch.dataset.cat; persist(); renderHome(); });
+
+  /* grid */
+  const list = filtered();
+  const grid = $("#itemGrid");
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="icon">🔍</div><b>Nothing found</b>Try a different search or category — or be the first to upload it.</div>`;
+    return;
+  }
+  grid.innerHTML = list.map(cardHtml).join("");
+  grid.querySelectorAll(".card").forEach(c => c.onclick = () => go("item", c.dataset.id));
+
+  /* rail: fresh uploads */
+  const fresh = [...state.items].sort((a,b) => new Date(b.added) - new Date(a.added)).slice(0, 5);
+  $("#freshList").innerHTML = fresh.map(i =>
+    `<div class="mini-item" data-id="${esc(i.id)}">
+       <img src="${itemImg(i)}" alt="" loading="lazy">
+       <div><div class="t">${esc(i.title)}</div><div class="m">${esc(i.maker)} · ${timeAgo(i.added)}</div></div>
+     </div>`).join("");
+  document.querySelectorAll("#freshList .mini-item").forEach(el => el.onclick = () => go("item", el.dataset.id));
+
+  renderPosts();
+}
+function cardHtml(i){
+  const badge = i.source === "store"
+    ? `<span class="badge store">STORE</span>`
+    : i.status === "pending"
+      ? `<span class="badge pending">PENDING REVIEW</span>`
+      : `<span class="badge community">COMMUNITY</span>`;
+  const isNew = (Date.now() - new Date(i.added).getTime()) < 3*864e5;
+  return `<div class="card" data-id="${esc(i.id)}">
+    <div class="card-thumb">
+      <img src="${itemImg(i)}" alt="${esc(i.title)}" loading="lazy">
+      ${badge}${isNew?'<span class="badge new" style="left:auto;right:9px">NEW</span>':""}
+      ${i.glb ? '<span class="card-3d">🧊 3D</span>' : ""}
+    </div>
+    <div class="card-body">
+      <div class="card-title">${esc(i.title)}</div>
+      <div class="card-meta"><span class="maker">${esc(i.maker)}</span>·<span>${esc(i.cat)}</span></div>
+      <div class="card-stats">
+        <span>❤️ ${i.likes}</span><span>🖨️ ${i.prints}</span><span>💬 ${(i.comments||[]).length}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* workbench posts */
+function renderPosts(){
+  const el = $("#postList");
+  if (!state.posts.length) {
+    el.innerHTML = `<div class="empty-state" style="padding:18px 6px"><b style="font-size:13px">The bench is quiet</b><span style="font-size:12px">Be the first to say hi 👋</span></div>`;
+    return;
+  }
+  el.innerHTML = [...state.posts].sort((a,b) => b.at - a.at).slice(0, 30).map(p =>
+    `<div class="post">${avatarHtml(p.name,30)}
+      <div><span class="who">${esc(p.name)}</span><span class="when">${timeAgo(p.at)}</span>
+      <div class="what">${esc(p.text)}</div></div>
+    </div>`).join("");
+}
+function addPost(){
+  const text = $("#postText").value.trim();
+  const name = ($("#postName").value.trim() || "Maker") ;
+  if (!text) { toast("Write something first 😄"); return; }
+  state.posts.push({ name, text, at: new Date().toISOString() });
+  if (state.posts.length > 120) state.posts = state.posts.slice(-120);
+  persist();
+  $("#postText").value = ""; $("#postName").value = "";
+  renderPosts();
+  toast("Posted to the workbench ⚡");
+}
+
+/* ============================================================
+   ITEM DETAIL
+   ============================================================ */
+function renderItem(id){
+  const it = state.items.find(i => i.id === id);
+  const box = $("#itemDetail");
+  if (!it) { box.innerHTML = `<div class="empty-state"><div class="icon">🫥</div><b>Idea not found</b>It may have been removed.</div>`; return; }
+
+  const isNew = (Date.now() - new Date(it.added).getTime()) < 3*864e5;
+  const badge = it.source === "store"
+    ? `<span class="badge store">STORE ORIGINAL</span>`
+    : it.status === "pending"
+      ? `<span class="badge pending">PENDING REVIEW</span>`
+      : `<span class="badge community">COMMUNITY</span>`;
+  const dateStr = new Date(it.added).toLocaleDateString(undefined, {month:"short", day:"numeric", year:"numeric"});
+
+  const viewerHtml = it.glb ? `
+    <model-viewer id="mv" src="${STORE_GLB_BASE}${it.glb}" alt="${esc(it.title)}" camera-controls auto-rotate shadow-intensity="1" exposure="1.1" tone-mapping="neutral" style="width:100%;height:520px;background:radial-gradient(600px 400px at 50% 30%, #13203a, #0a0f1d)">
+      <button slot="ar-button" style="display:none"></button>
+    </model-viewer>` : "";
+
+  box.innerHTML = `
+  <div class="detail-grid">
+    <div class="detail-media">${viewerHtml || `<img src="${itemImg(it)}" alt="${esc(it.title)}">`}</div>
+    <div class="detail-info">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">${badge}${isNew?'<span class="badge new">NEW</span>':""}</div>
+      <h1>${esc(it.title)}</h1>
+      <div class="byline">${avatarHtml(it.maker,34)}
+        <div><div class="who">${esc(it.maker)}</div><div class="when">added ${dateStr}</div></div>
+      </div>
+      <div class="stat-pills">
+        <span class="pill">❤️ <b>${it.likes}</b> likes</span>
+        <span class="pill">🖨️ <b>${it.prints}</b> prints</span>
+        <span class="pill">🏷 ${esc(it.cat)}</span>
+      </div>
+      <div class="action-row">
+        <button class="btn" id="likeBtn">❤️ Like</button>
+        <button class="btn ghost" id="printBtn">🖨️ I'd print this</button>
+        ${it.source === "store" ? `<button class="btn ghost" onclick="window.open('https://tommylabs.store','_blank')">🛒 Visit store</button>` : ""}
+      </div>
+      <div class="desc">${esc(it.desc)}</div>
+      ${(it.tags||[]).length ? `<div class="tags">${it.tags.map(t => `<span class="tag">#${esc(t)}</span>`).join("")}</div>` : ""}
+      <div class="comments">
+        <h3>💬 Community talk (${(it.comments||[]).length})</h3>
+        <div id="cList">${(it.comments||[]).map(c => `
+          <div class="comment">${avatarHtml(c.name,28)}
+            <div class="bubble"><span class="who">${esc(c.name)}</span><span class="when">${timeAgo(c.at)}</span>
+            <div class="what">${esc(c.text)}</div></div>
+          </div>`).join("") || `<div class="empty-state" style="padding:14px 6px"><span style="font-size:12.5px">No talk yet — start it.</span></div>`}
+        </div>
+        <div class="comment-form">
+          <input id="cName" placeholder="Name" maxlength="24" style="max-width:110px">
+          <input id="cText" placeholder="Say something about this idea…" maxlength="300">
+          <button class="btn small" id="cSend">Post</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  $("#likeBtn").onclick = () => { it.likes++; persist(); renderItem(it.id); toast("Liked! ❤️"); };
+  $("#printBtn").onclick = () => { it.prints++; persist(); renderItem(it.id); toast("Added to the print wishlist 🖨️"); };
+  $("#cSend").onclick = () => {
+    const t = $("#cText").value.trim(), n = $("#cName").value.trim() || "Maker";
+    if (!t) return;
+    it.comments = it.comments || [];
+    it.comments.push({ name: n, text: t, at: new Date().toISOString() });
+    persist();
+    toast("Comment posted 💬");
+    renderItem(it.id);
+  };
+  $("#cText").addEventListener("keydown", e => { if (e.key === "Enter") $("#cSend").click(); });
+}
+
+/* ============================================================
+   UPLOAD
+   ============================================================ */
+let upImage = null;
+function renderUpload(){
+  upImage = null;
+  $("#upPreview").style.display = "none";
+  $("#upDrop").classList.remove("drag");
+}
+function setupDrop(dropEl, fileInput, onImg){
+  const pick = () => fileInput.click();
+  dropEl.onclick = e => { if (e.target.tagName !== "IMG") pick(); };
+  fileInput.onchange = () => {
+    if (fileInput.files[0]) handleFile(fileInput.files[0], onImg);
+  };
+  ["dragover","dragenter"].forEach(ev => dropEl.addEventListener(ev, e => { e.preventDefault(); dropEl.classList.add("drag"); }));
+  ["dragleave","drop"].forEach(ev => dropEl.addEventListener(ev, e => { e.preventDefault(); dropEl.classList.remove("drag"); }));
+  dropEl.addEventListener("drop", e => {
+    const f = e.dataTransfer.files[0];
+    if (f && f.type.startsWith("image/")) handleFile(f, onImg);
+  });
+  return pick;
+}
+function handleFile(file, onImg){
+  if (file.size > 8*1024*1024) { toast("That image is over 8 MB 😅"); return; }
+  const reader = new FileReader();
+  reader.onload = () => downscale(reader.result, 900, onImg);
+  reader.readAsDataURL(file);
+}
+function downscale(dataUrl, maxSide, onImg){
+  const img = new Image();
+  img.onload = () => {
+    let { width: w, height: h } = img;
+    if (Math.max(w,h) > maxSide) {
+      const k = maxSide / Math.max(w,h);
+      w = Math.round(w*k); h = Math.round(h*k);
+    }
+    const c = document.createElement("canvas");
+    c.width = w; c.height = h;
+    c.getContext("2d").drawImage(img, 0, 0, w, h);
+    onImg(c.toDataURL("image/jpeg", 0.82));
+  };
+  img.src = dataUrl;
+}
+
+/* upload submit */
+function bindUpload(){
+  $("#upSubmit").onclick = () => {
+    const title = $("#upTitle").value.trim();
+    if (!title) { toast("Give your idea a title first ✏️"); return; }
+    const name = $("#upName").value.trim() || "Maker";
+    const tags = $("#upTags").value.split(",").map(t => t.trim().toLowerCase()).filter(Boolean).slice(0,8);
+    const item = {
+      id: "u-" + Date.now().toString(36),
+      title,
+      maker: name,
+      source: "community",
+      status: "pending",
+      cat: $("#upCat").value,
+      img: upImage,
+      desc: $("#upDesc").value.trim() || "A fresh idea from the community.",
+      tags,
+      likes: 0, prints: 0, comments: [],
+      added: new Date().toISOString(),
+    };
+    state.items.push(item);
+    persist();
+    $("#upTitle").value = ""; $("#upDesc").value = ""; $("#upTags").value = "";
+    upImage = null;
+    $("#upPreview").style.display = "none";
+    toast("Published! 🎉 It's in the catalog now");
+    go("item", item.id);
+  };
+}
+
+/* ============================================================
+   2D → 3D LAB
+   ============================================================ */
+function engineOnline(){ return !!(window.TOMMY_3D_ENGINE && window.TOMMY_3D_ENGINE.endpoint); }
+function renderLab(){
+  const eng = window.TOMMY_3D_ENGINE || {};
+  const on = engineOnline();
+  const banner = $("#engineBanner");
+  const dot = $("#labDot"), outDot = $("#outDot");
+  banner.innerHTML = on
+    ? `<span>🟢</span><span><b>Engine online.</b> Paste a picture and it goes straight to the engine → the model renders on the right.</span>`
+    : `<span>🟡</span><span><b>Engine slot ready — no engine installed yet.</b> Paste a picture anyway to try the flow; the moment the engine is configured the result appears in the viewer on the right.</span>`;
+  banner.className = "engine-banner" + (on ? " on" : "");
+  dot.className = "dot " + (on ? "on" : "off");
+  outDot.className = "dot " + (on ? "on" : "soon");
+  $("#slotCode").textContent =
+`// catalog/index.html — top of the script
+window.TOMMY_3D_ENGINE = {
+  endpoint: ${eng.endpoint ? JSON.stringify(eng.endpoint) : "null // ← put your engine URL here"},
+  apiKey:   ${eng.apiKey ? JSON.stringify(eng.apiKey) : "null"},
+  prompt:   ${JSON.stringify(eng.prompt || "")}
+};`;
+  if (!on) setStage("empty");
+  else if (!state.labImg) setStage("empty");
+}
+function setStage(kind, html){
+  const stage = $("#labStage");
+  if (kind === "empty") {
+    stage.className = "stage empty";
+    stage.innerHTML = `<div><div class="icon">🛠️</div><p>Drop a picture on the left and the generated 3D model will appear here — ready to spin, inspect, and hand to the printer.</p></div>`;
+  } else if (kind === "busy") {
+    stage.className = "stage";
+    stage.innerHTML = `<div style="text-align:center"><div class="spin" style="margin:0 auto 14px"></div><p style="color:var(--muted);font-size:13px">${esc(html||"Sending your picture to the engine…")}</p></div>`;
+  } else if (kind === "error") {
+    stage.className = "stage empty";
+    stage.innerHTML = `<div><div class="icon">😵</div><p style="color:var(--red)">${esc(html||"The engine didn't return a model.")}</p><button class="btn small" style="margin-top:12px" id="retryLab">Try again</button></div>`;
+    $("#retryLab")?.addEventListener("click", () => runEngine());
+  } else if (kind === "model") {
+    stage.className = "stage";
+    stage.innerHTML = `<model-viewer src="${esc(html)}" alt="Generated 3D model" camera-controls auto-rotate shadow-intensity="1" exposure="1.1" style="width:100%;height:420px;background:radial-gradient(600px 400px at 50% 30%, #13203a, #0a0f1d)"></model-viewer>
+      <div style="margin-top:10px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <button class="btn small" id="labDownload" onclick="window.open('${esc(html)}','_blank')">⬇️ Download GLB</button>
+        <button class="btn small ghost" id="labAgain">Try another</button>
+      </div>`;
+    $("#labAgain").onclick = () => { state.labImg = null; $("#labPreview").style.display = "none"; renderLab(); };
+  }
+}
+async function runEngine(){
+  if (!engineOnline()) { toast("Engine not installed yet — slot is ready ⚙️"); return; }
+  const eng = window.TOMMY_3D_ENGINE;
+  setStage("busy", "Sending your picture to the engine…");
+  try {
+    const res = await fetch(eng.endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...(eng.apiKey ? { "Authorization": "Bearer " + eng.apiKey } : {}) },
+      body: JSON.stringify({ image: state.labImg, prompt: eng.prompt || "" }),
+    });
+    if (!res.ok) throw new Error("engine returned HTTP " + res.status);
+    const data = await res.json().catch(() => null);
+    const url = (data && (data.modelUrl || data.model || data.url)) || (typeof data === "string" ? data : null);
+    if (!url) throw new Error("no modelUrl in engine response");
+    setStage("model", url);
+    toast("3D model ready 🧊");
+  } catch (err) {
+    setStage("error", "Engine call failed: " + err.message);
+  }
+}
+function bindLab(){
+  const pick = setupDrop($("#labDrop"), $("#labFile"), dataUrl => {
+    state.labImg = dataUrl;
+    const pv = $("#labPreview");
+    pv.src = dataUrl; pv.style.display = "block";
+    if (engineOnline()) runEngine();
+    else setStage("empty");
+  });
+  /* paste anywhere in the lab view */
+  document.addEventListener("paste", e => {
+    if (!$("#view-lab").classList.contains("active")) return;
+    const item = [...(e.clipboardData?.items || [])].find(i => i.type.startsWith("image/"));
+    if (!item) return;
+    e.preventDefault();
+    const f = item.getAsFile();
+    if (f) handleFile(f, dataUrl => {
+      state.labImg = dataUrl;
+      const pv = $("#labPreview");
+      pv.src = dataUrl; pv.style.display = "block";
+      if (engineOnline()) runEngine();
+      else setStage("empty");
+    });
+  });
+}
+
+/* ============================================================
+   TOAST + BOOT
+   ============================================================ */
+let toastTimer = null;
+function toast(msg){
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
+}
+
+function bind(){
+  document.querySelectorAll("[data-nav]").forEach(b => b.onclick = () => go(b.dataset.nav));
+  $("#brandBtn").onclick = () => go("home");
+  $("#itemBack").onclick = () => go("home");
+  $("#sortSel").onchange = e => { state.sort = e.target.value; persist(); renderHome(); };
+  let debounce;
+  $("#searchInput").addEventListener("input", e => {
+    clearTimeout(debounce);
+    debounce = setTimeout(() => { state.query = e.target.value.trim().toLowerCase(); renderHome(); }, 180);
+  });
+  $("#postBtn").onclick = addPost;
+  $("#postText").addEventListener("keydown", e => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) addPost(); });
+  setupDrop($("#upDrop"), $("#upFile"), dataUrl => {
+    upImage = dataUrl;
+    const pv = $("#upPreview");
+    pv.src = dataUrl; pv.style.display = "block";
+  });
+  bindUpload();
+  bindLab();
+}
+bind();
+render();
+</script>
+</body>
+</html>

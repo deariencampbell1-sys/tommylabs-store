@@ -29,3 +29,10 @@ exact way to recreate the site inside Carrd (or just use Option A - 30 seconds).
   why the shortcut exists instead of double-clicking index.html.
 
 © 2026 Tommy Labs - made by Tommy Scruggs
+
+## Maker Catalog (subdomain: catalog.tommylabs.store)
+
+The `catalog/` folder is a separate, self-contained community catalog app
+(Maker World-style): browse ideas, upload your own, workbench chat, and the
+2D→3D Lab slot where the future image→3D engine plugs in. It deploys as its
+own Cloudflare Pages project. See `catalog/DEPLOY.md` for the exact steps.
