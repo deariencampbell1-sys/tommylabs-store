@@ -201,6 +201,40 @@
   .card-stats{display:flex;gap:12px;margin-top:auto;font-size:11.5px;color:var(--faint)}
   .card-stats span{display:inline-flex;align-items:center;gap:4px}
 
+  /* ---------- star ratings ---------- */
+  .rating{display:inline-flex;align-items:center;gap:6px;font-size:12.5px}
+  .rating .stars{display:inline-flex;gap:1px}
+  .rating b{color:var(--amber);font-weight:800}
+  .rating .rc{color:var(--faint);font-size:11px}
+  .rating-sm .stars .star{width:11px;height:11px}
+  .rating-sm b{font-size:11px}
+  .rating-sm .rc{font-size:10px}
+  .star{width:14px;height:14px;display:block;fill:rgba(148,163,184,.28);stroke:rgba(148,163,184,.45);stroke-width:1}
+  .star-cell.full .star,.rating .stars .star-cell.full .star{fill:#fbbf24;stroke:#f59e0b}
+  .star-cell.half .star{fill:rgba(251,191,36,.55);stroke:#f59e0b}
+  .card-rate{margin-top:2px}
+  .rate-none{font-size:11px;color:var(--faint)}
+  /* item page rate widget */
+  .rate-widget{display:flex;align-items:center;gap:12px;margin:10px 0 14px;flex-wrap:wrap}
+  .rate-stars{display:inline-flex;gap:2px}
+  .rate-btn{
+    background:none;border:none;padding:2px;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .rate-btn .star{width:26px;height:26px;fill:rgba(148,163,184,.25);stroke:rgba(148,163,184,.5);stroke-width:1;transition:transform .12s}
+  .rate-btn:hover .star{transform:scale(1.18);fill:var(--amber);stroke:#f59e0b}
+  .rate-btn:nth-child(1):hover ~ .rate-btn .star,
+  .rate-btn:nth-child(1):hover .star{fill:var(--amber)}
+  .rate-btn:nth-child(2):hover ~ .rate-btn .star,
+  .rate-btn:nth-child(2):hover .star{fill:var(--amber)}
+  .rate-btn:nth-child(3):hover ~ .rate-btn .star,
+  .rate-btn:nth-child(3):hover .star{fill:var(--amber)}
+  .rate-btn:nth-child(4):hover ~ .rate-btn .star,
+  .rate-btn:nth-child(4):hover .star{fill:var(--amber)}
+  .rate-btn:nth-child(5):hover ~ .rate-btn .star,
+  .rate-btn:nth-child(5):hover .star{fill:var(--amber)}
+  .rate-meta{font-size:13px}
+
   /* ---------- rail ---------- */
   .rail{display:flex;flex-direction:column;gap:16px;position:sticky;top:76px}
   @media(max-width:960px){.rail{position:static}}
@@ -422,6 +456,11 @@
     border-radius:10px;padding:10px 13px;font-size:12.5px;margin-bottom:14px;line-height:1.5;
   }
   .print-actions{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:10px}
+  .bambu-btn{
+    background:linear-gradient(135deg,#00ae42,#00c950) !important;color:#fff !important;
+    box-shadow:0 6px 18px rgba(0,174,66,.35);
+  }
+  .bambu-btn:hover{box-shadow:0 8px 24px rgba(0,174,66,.5)}
   .print-note{font-size:11px;color:var(--faint);line-height:1.5}
 
   /* ---------- footer / toast / empty ---------- */
@@ -731,6 +770,7 @@
           </div>
           <div class="print-warn" id="printWarn" style="display:none"></div>
           <div class="print-actions">
+            <button class="btn small bambu-btn" id="printBambu" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Send to Bambu Lab</button>
             <button class="btn small" id="printDownload" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download STL</button>
             <a class="btn small ghost" id="printStore" href="https://tommylabs.store" target="_blank" rel="noopener" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Order from Tommy</a>
           </div>
@@ -775,6 +815,21 @@
   </div>
 </div>
 
+<!-- ================= BAMBU LAB SEND DIALOG ================= -->
+<div class="install-dialog" id="bambuDialog" role="dialog" aria-modal="true" aria-labelledby="bambuDialogTitle">
+  <div class="install-dialog-card">
+    <img src="/icon-192.png" alt="" class="install-dialog-icon" width="58" height="58">
+    <div class="install-dialog-text">
+      <h3 id="bambuDialogTitle">Sent to Bambu Lab 🚀</h3>
+      <p id="bambuDialogBody"><b id="bambuDialogName"></b> is downloading. Open the file in <b>Bambu Studio</b> (or <b>Bambu Handy</b> on your phone) and it'll go straight to your printer.</p>
+      <div class="install-dialog-actions">
+        <a class="install-dialog-btn primary" href="https://bambulab.com/en/download" target="_blank" rel="noopener" style="text-decoration:none">Get Bambu Studio</a>
+        <button class="install-dialog-btn ghost" id="bambuDialogClose">Got it</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <footer>
   <p><img src="assets/img/logo.webp" alt="Tommy's Labs" class="logo-img" style="height:30px;margin:0 auto 10px;border-radius:7px"></p>
   <p>© 2026 <a href="https://tommylabs.store" target="_blank" rel="noopener">Tommy Labs</a> — 3D printed creations by <a href="https://tommylabs.store" target="_blank" rel="noopener">Tommy Scruggs</a></p>
@@ -813,6 +868,15 @@ const STORE_GLB_BASE = "https://tommylabs.store/models-webp/";
 const LS_ITEMS = "tlc.items.v1";
 const LS_POSTS = "tlc.posts.v1";
 const AVATAR_COLORS = ["#38bdf8","#a78bfa","#4ade80","#fbbf24","#f87171","#22d3ee","#f472b6","#fb923c"];
+
+/* Deterministic ratings for seeded items (rating 1-5 + how many people rated).
+   Community/pending items start at 0 with no votes until people rate them. */
+const SEED_RATINGS = {
+  "s-batman": {r:4.9, n:124}, "s-dragon": {r:4.8, n:211}, "s-tiger": {r:4.7, n:97},
+  "s-wolf":   {r:4.6, n:83},  "s-owlbowl":{r:4.5, n:71}, "s-mando":  {r:4.8, n:109},
+  "s-eagle":  {r:4.4, n:52},  "s-reaper": {r:4.7, n:88}, "s-goldowl":{r:4.6, n:64},
+  "s-trex":   {r:4.8, n:76},  "s-castle": {r:4.5, n:58}, "s-stag":   {r:4.3, n:41}
+};
 
 const CATEGORIES = ["All","Figurines","Dragons","Owls","Masks & Busts","Home & Utility","Fans & Cosplay","Other"];
 
@@ -854,6 +918,15 @@ let state = {
 };
 if (!state.items) { state.items = JSON.parse(JSON.stringify(SEED)); persist(); }
 if (!state.posts) { state.posts = []; persist(); }
+/* attach seeded ratings to items that don't have one yet */
+state.items.forEach(it => {
+  if (it.rating === undefined || it.rating === null) {
+    const sr = SEED_RATINGS[it.id];
+    it.rating = sr ? sr.r : 0;
+    it.ratingCount = sr ? sr.n : 0;
+  }
+});
+persist();
 
 function load(k){ try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } }
 function persist(){ try { localStorage.setItem(LS_ITEMS, JSON.stringify(state.items)); localStorage.setItem(LS_POSTS, JSON.stringify(state.posts)); } catch(e){} }
@@ -870,6 +943,28 @@ const timeAgo = iso => {
 };
 const avatarColor = name => AVATAR_COLORS[[...String(name||"")].reduce((a,c)=>a+c.charCodeAt(0),0) % AVATAR_COLORS.length];
 const avatarHtml = (name,size) => `<span class="avatar" style="width:${size}px;height:${size}px;font-size:${Math.round(size*.38)}px;background:${avatarColor(name)}">${esc((name||"?").trim()[0]?.toUpperCase()||"?")}</span>`;
+
+/* ---------- star ratings ---------- */
+const STAR = '<svg viewBox="0 0 24 24" class="star"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+function starRow(rating){
+  const r = Math.max(0, Math.min(5, +rating || 0));
+  let out = "";
+  for (let i = 1; i <= 5; i++) {
+    const fill = r >= i ? "full" : (r >= i - 0.5 ? "half" : "");
+    out += `<span class="star-cell ${fill}">${STAR}</span>`;
+  }
+  return out;
+}
+function ratingHtml(it, size){
+  if (!it.rating || it.rating <= 0) return `<span class="rate-none">${size==="sm" ? "" : ""}No ratings yet</span>`;
+  return `<span class="rating${size==="sm" ? " rating-sm" : ""}" title="${(+it.rating).toFixed(1)} out of 5"><span class="stars">${starRow(it.rating)}</span><b>${(+it.rating).toFixed(1)}</b><span class="rc">(${it.ratingCount||0})</span></span>`;
+}
+function rateItem(it, stars){
+  if (!it.rating || it.rating <= 0) { it.rating = stars; it.ratingCount = 1; }
+  else { it.rating = (it.rating * (it.ratingCount||0) + stars) / ((it.ratingCount||0) + 1); it.ratingCount = (it.ratingCount||0) + 1; }
+  persist();
+  toast("Thanks for rating! ⭐");
+}
 
 /* SVG thumbnails for community items (no image file needed) */
 function svgThumb(it){
@@ -984,6 +1079,7 @@ function cardHtml(i){
     <div class="card-body">
       <div class="card-title">${esc(i.title)}</div>
       <div class="card-meta"><span class="maker">${esc(i.maker)}</span>·<span>${esc(i.cat)}</span></div>
+      <div class="card-rate">${ratingHtml(i, "sm")}</div>
       <div class="card-stats">
         <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg> ${i.likes}</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> ${i.prints}</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> ${(i.comments||[]).length}</span>
       </div>
@@ -1046,6 +1142,12 @@ function renderItem(id){
       <div class="byline">${avatarHtml(it.maker,34)}
         <div><div class="who">${esc(it.maker)}</div><div class="when">added ${dateStr}</div></div>
       </div>
+      <div class="rate-widget" id="rateWidget">
+        <div class="rate-stars" id="rateStars" data-id="${esc(it.id)}">
+          ${[1,2,3,4,5].map(s => `<button class="rate-btn" data-v="${s}" aria-label="${s} stars">${STAR}</button>`).join("")}
+        </div>
+        <div class="rate-meta">${ratingHtml(it)}</div>
+      </div>
       <div class="stat-pills">
         <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg> <b>${it.likes}</b></span>
         <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> <b>${it.prints}</b></span>
@@ -1058,6 +1160,7 @@ function renderItem(id){
       </div>
       <div class="desc">${esc(it.desc)}</div>
       ${(it.tags||[]).length ? `<div class="tags">${it.tags.map(t => `<span class="tag">#${esc(t)}</span>`).join("")}</div>` : ""}
+      <div id="itemPrintProfile" style="margin-bottom:20px"></div>
       <div class="comments">
         <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Community talk (${(it.comments||[]).length})</h3>
         <div id="cList">${(it.comments||[]).map(c => `
@@ -1077,6 +1180,14 @@ function renderItem(id){
 
   $("#likeBtn").onclick = () => { it.likes++; persist(); renderItem(it.id); toast("Liked! ❤️"); };
   $("#printBtn").onclick = () => { it.prints++; persist(); renderItem(it.id); toast("Added to the print wishlist 🖨️"); };
+  renderItemPrintProfile(it, "#itemPrintProfile");
+  /* star rating */
+  const rateStars = $("#rateStars");
+  if (rateStars) {
+    rateStars.querySelectorAll(".rate-btn").forEach(b => {
+      b.onclick = () => { rateItem(it, +b.dataset.v); renderItem(it.id); };
+    });
+  }
   $("#cSend").onclick = () => {
     const t = $("#cText").value.trim(), n = $("#cName").value.trim() || "Maker";
     if (!t) return;
@@ -1379,20 +1490,68 @@ function meshToStl(m){
   return new Blob([buf], { type: "model/stl" });
 }
 
+/* ---------- GLB -> STL (deterministic geometry conversion, no inference) ----------
+   Reads the first mesh primitive of a glTF 2.0 binary: POSITION + indices.
+   Falls back gracefully on exotic files. Used so every store model can hand a
+   printable STL to Bambu Studio / any slicer. */
+function glbToMesh(glbBuffer){
+  const dv = new DataView(glbBuffer);
+  if (dv.getUint32(0, true) !== 0x46546C67) throw new Error("not a GLB");
+  const jsonLen = dv.getUint32(12, true);
+  const jsonType = dv.getUint32(16, true);
+  if (jsonType !== 0x4E4F534A) throw new Error("first chunk is not JSON");
+  const json = JSON.parse(new TextDecoder().decode(new Uint8Array(glbBuffer, 20, jsonLen)));
+  const binStart = 20 + jsonLen + ((4 - ((20 + jsonLen) % 4)) % 4);
+  const bin = new Uint8Array(glbBuffer, binStart + 8); // skip BIN chunk header (len+type)
+  const bufView = (i) => json.bufferViews[i];
+  const accessor = (i) => json.accessors[i];
+  const readPos = (accIdx) => {
+    const acc = accessor(accIdx);
+    const bv = bufView(acc.bufferView);
+    const off = (bv.byteOffset || 0) + acc.byteOffset;
+    const comp = new Float32Array(bin.buffer, bin.byteOffset + off, acc.count * 3);
+    return comp;
+  };
+  const readIdx = (accIdx) => {
+    const acc = accessor(accIdx);
+    const bv = bufView(acc.bufferView);
+    const off = (bv.byteOffset || 0) + acc.byteOffset;
+    if (acc.componentType === 5123) return new Uint16Array(bin.buffer, bin.byteOffset + off, acc.count);
+    if (acc.componentType === 5125) return new Uint32Array(bin.buffer, bin.byteOffset + off, acc.count);
+    throw new Error("unsupported index type " + acc.componentType);
+  };
+  for (const mesh of json.meshes || []) {
+    for (const prim of mesh.primitives || []) {
+      if (prim.mode !== undefined && prim.mode !== 4) continue; // triangles only
+      if (!prim.attributes || prim.attributes.POSITION === undefined) continue;
+      const pos = readPos(prim.attributes.POSITION);
+      let idx;
+      if (prim.indices !== undefined) {
+        idx = Array.from(readIdx(prim.indices));
+      } else {
+        idx = [];
+        for (let i = 0; i < pos.length / 3; i++) idx.push(i);
+      }
+      return { pos, idx, name: mesh.name || "" };
+    }
+  }
+  throw new Error("no triangle mesh found");
+}
+
 function meshVolumeCm3(m){
   // rough volume: footprint × average height (generated relief is a solid slab with raised top)
   const avgH = RELIEF_BASE + (RELIEF_H / 2);
   return (RELIEF_MM * RELIEF_MM * avgH) / 1000; // mm3 -> cm3
 }
 
-/* ---------- print estimates ---------- */
+/* ---------- print estimates (shared: Lab + item pages) ---------- */
 let labCurrent = null; // { kind:"photo"|"store", dimsMm:[w,d,h], volCm3, stlBlob?, storeUrl?, name }
 
-function fillMachineSelect(){
-  const sel = $("#printMachine");
+function fillMachineSelect(selId, onChange){
+  const sel = $(selId);
   if (!sel || sel.options.length) return;
   sel.innerHTML = PRINTERS.map((p,i) => `<option value="${p.id}">${p.name} — ${p.bed[0]}×${p.bed[1]}×${p.bed[2]} mm</option>`).join("");
-  sel.onchange = updatePrintEstimates;
+  sel.onchange = onChange || updatePrintEstimates;
 }
 
 function updatePrintEstimates(){
@@ -1414,26 +1573,208 @@ function updatePrintEstimates(){
   }
   const dl = $("#printDownload");
   const store = $("#printStore");
-  if (labCurrent.kind === "photo" && labCurrent.stlBlob) {
+  const bambu = $("#printBambu");
+  if (labCurrent.stlBlob) {
     dl.style.display = "inline-flex";
-    dl.onclick = () => {
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(labCurrent.stlBlob);
-      a.download = "tommylabs-relief.stl";
-      a.click();
-      toast("STL downloaded — ready to slice 🖨️");
-    };
+    dl.onclick = () => saveStl(labCurrent.stlBlob, labCurrent.fileName || "tommylabs-model.stl");
     store.style.display = "none";
+    if (bambu) { bambu.style.display = "inline-flex"; bambu.onclick = sendToBambu; }
   } else {
     dl.style.display = "none";
     store.style.display = labCurrent.kind === "store" ? "inline-flex" : "none";
+    if (bambu) bambu.style.display = "none";
   }
 }
 
+function saveStl(blob, name){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  toast("STL downloaded — ready to slice 🖨️");
+}
+
 function showPrintPanel(){
-  fillMachineSelect();
+  fillMachineSelect("#printMachine");
   $("#printPanel").style.display = "block";
   updatePrintEstimates();
+}
+
+/* Bambu Lab handoff — deterministic, no cloud account needed: hands the STL to
+   Bambu Studio / Bambu Handy on the visitor's own machine. If Bambu Studio is
+   installed it opens via the file's default handler after download. */
+function sendToBambu(){
+  if (!labCurrent || !labCurrent.stlBlob) { toast("Generate a model first 🙂"); return; }
+  saveStl(labCurrent.stlBlob, labCurrent.fileName || "tommylabs-model.stl");
+  const dlg = $("#bambuDialog");
+  if (dlg) {
+    $("#bambuDialogName").textContent = (labCurrent.fileName || "tommylabs-model.stl").replace(".stl","");
+    dlg.classList.add("show");
+  } else {
+    toast("STL saved — open it in Bambu Studio or Bambu Handy to print");
+  }
+}
+
+/* ---------- item-page print profile (MakerWorld-style) ---------- */
+function renderItemPrintProfile(it, containerSel){
+  const box = $(containerSel);
+  if (!box) return;
+  if (!it.glb) {
+    box.innerHTML = `<div class="print-panel"><div class="print-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print it</div>
+      <div class="print-body"><p class="print-note" style="margin:0">No 3D model on this one yet — check back soon.</p></div></div>`;
+    return;
+  }
+  box.innerHTML = `
+  <div class="print-panel">
+    <div class="print-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print it</div>
+    <div class="print-body">
+      <div class="print-field">
+        <label for="ipMachine">Pick your machine</label>
+        <select id="ipMachine"></select>
+      </div>
+      <div class="print-stats">
+        <div class="pstat"><b id="ipFilament">–</b><span>Filament</span></div>
+        <div class="pstat"><b id="ipTime">–</b><span>Time</span></div>
+        <div class="pstat"><b id="ipSize">–</b><span>Size</span></div>
+      </div>
+      <div class="print-warn" id="ipWarn" style="display:none"></div>
+      <div class="print-actions">
+        <button class="btn small bambu-btn" id="ipBambu" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Send to Bambu Lab</button>
+        <button class="btn small ghost" id="ipDownload" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download STL</button>
+        <a class="btn small ghost" id="ipStore" href="https://tommylabs.store" target="_blank" rel="noopener" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Order from Tommy</a>
+      </div>
+      <p class="print-note">Estimates only — real time and filament depend on settings, infill, and your printer.</p>
+    </div>
+  </div>`;
+  fillMachineSelect("#ipMachine", () => updateItemPrintEstimates());
+  bindItemPrintActions(it);
+  // async: convert the GLB to a printable STL + estimate dims
+  fetch(STORE_GLB_BASE + it.glb).then(r => {
+    if (!r.ok) throw new Error("fetch");
+    return r.arrayBuffer();
+  }).then(buf => {
+    try {
+      const mesh = glbToMesh(buf);
+      const stlBlob = meshToStl(mesh);
+      // dims from GLB accessor min/max-ish: use bounding box of positions
+      let mn = [1e9,1e9,1e9], mx = [-1e9,-1e9,-1e9];
+      for (let i = 0; i < mesh.pos.length; i += 3) {
+        for (let k = 0; k < 3; k++) {
+          mn[k] = Math.min(mn[k], mesh.pos[i+k]);
+          mx[k] = Math.max(mx[k], mesh.pos[i+k]);
+        }
+      }
+      let dimsMm = [mx[0]-mn[0], mx[1]-mn[1], mx[2]-mn[2]].map(v => Math.abs(v) * 1000);
+      const longest = Math.max(...dimsMm);
+      // GLB units -> mm is ×1000; normalize to a desk-figure print size (~120mm).
+      if (longest > 150) { const k = 120 / longest; dimsMm = dimsMm.map(v => v * k); }
+      // Printed equivalent: display GLBs are solid shells, real prints are
+      // hollow — bbox × ~0.1 is a realistic figurine fill (thin walls + infill).
+      const volCm3 = (dimsMm[0]*dimsMm[1]*dimsMm[2]) / 1000 * 0.1;
+      itemCurrent = {
+        kind: "store", dimsMm, volCm3, stlBlob,
+        fileName: it.glb.replace(".glb", ".stl"),
+        storeUrl: "https://tommylabs.store"
+      };
+      updateItemPrintEstimates();
+    } catch (e) {
+      // fall back to viewer-based dims
+      const mv = $("#mv");
+      if (mv && mv.getDimensions) {
+        try {
+          const d = mv.getDimensions();
+          let dimsMm = [d.x*1000, d.y*1000, d.z*1000];
+          const longest = Math.max(...dimsMm);
+          if (longest > 240) { const k = 200 / longest; dimsMm = dimsMm.map(v => v * k); }
+          itemCurrent = { kind: "store", dimsMm, volCm3: (dimsMm[0]*dimsMm[1]*dimsMm[2])/1000*0.35, storeUrl: "https://tommylabs.store" };
+          updateItemPrintEstimates();
+        } catch (e2) {}
+      }
+    }
+  }).catch(() => {
+    const mv = $("#mv");
+    if (mv && mv.getDimensions) {
+      try {
+        const d = mv.getDimensions();
+        let dimsMm = [d.x*1000, d.y*1000, d.z*1000];
+        const longest = Math.max(...dimsMm);
+        if (longest > 240) { const k = 200 / longest; dimsMm = dimsMm.map(v => v * k); }
+        itemCurrent = { kind: "store", dimsMm, volCm3: (dimsMm[0]*dimsMm[1]*dimsMm[2])/1000*0.35, storeUrl: "https://tommylabs.store" };
+        updateItemPrintEstimates();
+      } catch (e2) {}
+    }
+  });
+}
+
+let itemCurrent = null;
+
+function triSoupVolumeCm3(pos, idx){
+  // signed tetrahedron volume — exact for closed meshes
+  let vol = 0;
+  for (let t = 0; t < idx.length; t += 3) {
+    const a = idx[t]*3, b = idx[t+1]*3, c = idx[t+2]*3;
+    const ax=pos[a],ay=pos[a+1],az=pos[a+2],bx=pos[b],by=pos[b+1],bz=pos[b+2],cx=pos[c],cy=pos[c+1],cz=pos[c+2];
+    vol += (ax*(by*cz-bz*cy) - ay*(bx*cz-bz*cx) + az*(bx*cy-by*cx)) / 6;
+  }
+  return Math.abs(vol) / 1000; // mm3 -> cm3
+}
+
+function triSoupVolumeCm3Scaled(pos, idx, scale){
+  // volume with an applied uniform scale (GLB units -> normalized mm)
+  let vol = 0;
+  for (let t = 0; t < idx.length; t += 3) {
+    const a = idx[t]*3, b = idx[t+1]*3, c = idx[t+2]*3;
+    const ax=pos[a]*scale,ay=pos[a+1]*scale,az=pos[a+2]*scale;
+    const bx=pos[b]*scale,by=pos[b+1]*scale,bz=pos[b+2]*scale;
+    const cx=pos[c]*scale,cy=pos[c+1]*scale,cz=pos[c+2]*scale;
+    vol += (ax*(by*cz-bz*cy) - ay*(bx*cz-bz*cx) + az*(bx*cy-by*cx)) / 6;
+  }
+  return Math.abs(vol) / 1000; // mm3 -> cm3
+}
+
+function updateItemPrintEstimates(){
+  if (!itemCurrent) return;
+  const p = PRINTERS.find(x => x.id === $("#ipMachine").value) || PRINTERS[0];
+  const [w,d,h] = itemCurrent.dimsMm;
+  $("#ipFilament").textContent = Math.max(1, Math.round(itemCurrent.volCm3 * PLA_G_PER_CM3)) + " g";
+  const hours = itemCurrent.volCm3 * PLA_G_PER_CM3 / p.gph;
+  const hh = Math.floor(hours), mm = Math.round((hours - hh) * 60);
+  $("#ipTime").textContent = hh > 0 ? `${hh}h ${mm}m` : `${mm}m`;
+  $("#ipSize").textContent = `${Math.round(w)}×${Math.round(d)}×${Math.round(h)} mm`;
+  const warn = $("#ipWarn");
+  const tooBig = [w,d,h].some((v,i) => v > p.bed[i] + 2);
+  if (tooBig) {
+    warn.style.display = "block";
+    warn.textContent = `This model is too big for the ${p.name} bed (${p.bed[0]}×${p.bed[1]}×${p.bed[2]} mm). Pick a bigger machine.`;
+  } else {
+    warn.style.display = "none";
+  }
+  const bambu = $("#ipBambu");
+  const dl = $("#ipDownload");
+  const store = $("#ipStore");
+  if (itemCurrent.stlBlob) {
+    bambu.style.display = "inline-flex";
+    dl.style.display = "inline-flex";
+    store.style.display = "none";
+  } else {
+    bambu.style.display = "none";
+    dl.style.display = "none";
+    store.style.display = "inline-flex";
+  }
+}
+
+function bindItemPrintActions(it){
+  const b = $("#ipBambu"), dl = $("#ipDownload");
+  if (b) b.onclick = () => {
+    if (!itemCurrent || !itemCurrent.stlBlob) { toast("Still preparing the model…"); return; }
+    saveStl(itemCurrent.stlBlob, itemCurrent.fileName);
+    const dlg = $("#bambuDialog");
+    if (dlg) {
+      $("#bambuDialogName").textContent = (itemCurrent.fileName || "tommylabs-model.stl").replace(".stl","");
+      dlg.classList.add("show");
+    }
+  };
+  if (dl) dl.onclick = () => { if (itemCurrent && itemCurrent.stlBlob) saveStl(itemCurrent.stlBlob, itemCurrent.fileName); };
 }
 
 /* ---------- load a store model into the lab ---------- */
@@ -1452,19 +1793,31 @@ function loadStoreModel(id){
       try {
         const d = mv.getDimensions(); // meters — raw scene units vary per model
         let dimsMm = [d.x * 1000, d.y * 1000, d.z * 1000];
-        // Normalize to a typical print size (~200mm on the longest side) so the
-        // filament/time estimates are sensible regardless of the GLB's authored scale.
+        // Normalize to a desk-figure print size (~120mm) so estimates are sensible.
         const longest = Math.max(...dimsMm);
-        if (longest > 240) {
-          const k = 200 / longest;
+        if (longest > 150) {
+          const k = 120 / longest;
           dimsMm = dimsMm.map(v => v * k);
         }
-        const volCm3 = (dimsMm[0] * dimsMm[1] * dimsMm[2]) / 1000 * 0.35; // ~35% infill-solid equivalent
+        // printed equivalent: hollow figurine fill ≈ 10% of the bounding box
+        const volCm3 = (dimsMm[0] * dimsMm[1] * dimsMm[2]) / 1000 * 0.1;
         labCurrent = { kind: "store", dimsMm, volCm3, storeUrl: "https://tommylabs.store" };
         showPrintPanel();
       } catch (e) {}
     };
     if (mv) { mv.addEventListener("load", onLoad); setTimeout(onLoad, 2500); }
+    // also convert to STL so Send to Bambu Lab works for store models
+    fetch(url).then(r => r.ok ? r.arrayBuffer() : Promise.reject(new Error("fetch"))).then(buf => {
+      try {
+        const mesh = glbToMesh(buf);
+        const stlBlob = meshToStl(mesh);
+        if (labCurrent) {
+          labCurrent.stlBlob = stlBlob;
+          labCurrent.fileName = it.glb.replace(".glb", ".stl");
+          updatePrintEstimates();
+        }
+      } catch (e) {}
+    }).catch(() => {});
   }, 50);
 }
 
@@ -1504,7 +1857,8 @@ async function buildRelief(){
       kind: "photo",
       dimsMm: [RELIEF_MM, RELIEF_MM, mesh.heightMm],
       volCm3: meshVolumeCm3(mesh),
-      stlBlob
+      stlBlob,
+      fileName: "tommylabs-relief.stl"
     };
     setStage("model", url);
     showPrintPanel();
@@ -1579,9 +1933,12 @@ const standalone = window.matchMedia('(display-mode: standalone)').matches || wi
 const IS_IOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
 function hideInstallDialog() { installDialog.classList.remove('show'); }
+function hideBambuDialog() { const d = document.getElementById('bambuDialog'); if (d) d.classList.remove('show'); }
 function rememberInstallDismiss() {
   try { localStorage.setItem('tl_install_dialog', JSON.stringify(Date.now())); } catch (e) {}
 }
+document.getElementById('bambuDialogClose')?.addEventListener('click', hideBambuDialog);
+document.getElementById('bambuDialog')?.addEventListener('click', e => { if (e.target === e.currentTarget) hideBambuDialog(); });
 
 if (!standalone && IS_MOBILE) {
   window.addEventListener('beforeinstallprompt', e => {
