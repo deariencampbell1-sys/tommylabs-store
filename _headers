@@ -3,6 +3,9 @@
 /models/*
   Cache-Control: public, max-age=31536000, immutable
   Access-Control-Allow-Origin: *
+/models-webp/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
 
 # Product/lab imagery — cache 30 days, revalidate
 /img/*
