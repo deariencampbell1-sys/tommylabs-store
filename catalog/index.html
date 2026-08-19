@@ -371,6 +371,58 @@
   details.slot-details summary{
     cursor:pointer;font-size:12.5px;color:var(--cyan);font-weight:600;user-select:none;
   }
+  /* ---------- lab: Tommy's models strip ---------- */
+  .lab-models{margin-bottom:18px}
+  .lab-models-head{
+    display:flex;align-items:center;gap:8px;font-size:12px;letter-spacing:1.6px;
+    text-transform:uppercase;color:var(--faint);margin-bottom:10px;
+  }
+  .lab-models-head .ic{color:var(--cyan)}
+  .lab-models-row{
+    display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;
+    scrollbar-width:thin;-webkit-overflow-scrolling:touch;
+  }
+  .lab-model-card{
+    flex:0 0 92px;background:var(--card);border:1px solid var(--line);border-radius:12px;
+    overflow:hidden;cursor:pointer;transition:all .15s;padding:0;
+  }
+  .lab-model-card:hover,.lab-model-card.sel{border-color:var(--cyan);box-shadow:0 0 14px rgba(56,189,248,.25);transform:translateY(-2px)}
+  .lab-model-card img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block}
+  .lab-model-card .nm{padding:6px 7px;font-size:10.5px;font-weight:700;color:var(--muted);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  /* ---------- lab: generate button ---------- */
+  .lab-go{
+    width:100%;justify-content:center;margin-top:18px;font-size:16px;padding:15px 20px;
+    background:linear-gradient(135deg,#2563eb,#38bdf8);box-shadow:0 8px 26px rgba(56,189,248,.35);
+  }
+  .lab-go:hover{box-shadow:0 10px 32px rgba(56,189,248,.5)}
+  /* ---------- print panel ---------- */
+  .print-panel{
+    margin-top:18px;border:1px solid var(--line);border-radius:var(--radius);
+    background:var(--card);overflow:hidden;
+  }
+  .print-head{
+    display:flex;align-items:center;gap:9px;padding:12px 16px;font-size:12px;letter-spacing:1.8px;
+    text-transform:uppercase;color:var(--cyan);border-bottom:1px solid var(--line);font-weight:700;
+  }
+  .print-head .ic{color:var(--cyan)}
+  .print-body{padding:16px}
+  .print-field{margin-bottom:14px}
+  .print-field label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:7px;letter-spacing:.4px}
+  .print-field select{
+    width:100%;background:var(--bg3);border:1px solid var(--line);color:var(--text);
+    border-radius:10px;padding:11px 14px;font-size:14px;outline:none;cursor:pointer;
+  }
+  .print-field select:focus{border-color:var(--cyan-dim)}
+  .print-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+  .pstat{background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+  .pstat b{display:block;font-size:17px;color:var(--text);margin-bottom:2px}
+  .pstat span{font-size:10.5px;color:var(--faint);letter-spacing:1px;text-transform:uppercase}
+  .print-warn{
+    background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);color:#fcd34d;
+    border-radius:10px;padding:10px 13px;font-size:12.5px;margin-bottom:14px;line-height:1.5;
+  }
+  .print-actions{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:10px}
+  .print-note{font-size:11px;color:var(--faint);line-height:1.5}
 
   /* ---------- footer / toast / empty ---------- */
   footer{
@@ -626,9 +678,15 @@
   <section class="view" id="view-lab">
     <div class="lab-wrap">
       <h1><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="m12 3 1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> Picture → 3D</h1>
-      <p class="sub">Pick a picture and turn it into a 3D print.</p>
+      <p class="sub">Pick a picture, or grab one of Tommy's models. Then hit <b>Make it 3D</b>.</p>
 
       <div class="engine-banner on" id="engineBanner" style="display:none"></div>
+
+      <!-- Tommy's ready-to-print models -->
+      <div class="lab-models">
+        <div class="lab-models-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Tommy's models — tap one to print</div>
+        <div class="lab-models-row" id="labModelsRow"></div>
+      </div>
 
       <div class="lab-grid">
         <div class="lab-drop" id="labDrop">
@@ -643,10 +701,40 @@
           <div class="head"><span class="dot soon" id="outDot"></span> 3D model</div>
           <div class="stage empty" id="labStage">
             <div>
-              <div class="icon">🧊</div>
+              <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px;opacity:.6"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
               <p>Your 3D model shows up here, ready to spin and print.</p>
             </div>
           </div>
+        </div>
+      </div>
+
+      <button class="btn lab-go" id="labGoBtn" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="m12 3 1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg>
+        Make it 3D
+      </button>
+
+      <!-- Print panel: machine + estimates -->
+      <div class="print-panel" id="printPanel" style="display:none">
+        <div class="print-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Print it
+        </div>
+        <div class="print-body">
+          <div class="print-field">
+            <label for="printMachine">Pick your machine</label>
+            <select id="printMachine"></select>
+          </div>
+          <div class="print-stats">
+            <div class="pstat"><b id="printFilament">–</b><span>Filament</span></div>
+            <div class="pstat"><b id="printTime">–</b><span>Time</span></div>
+            <div class="pstat"><b id="printSize">–</b><span>Size</span></div>
+          </div>
+          <div class="print-warn" id="printWarn" style="display:none"></div>
+          <div class="print-actions">
+            <button class="btn small" id="printDownload" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download STL</button>
+            <a class="btn small ghost" id="printStore" href="https://tommylabs.store" target="_blank" rel="noopener" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Order from Tommy</a>
+          </div>
+          <p class="print-note">Estimates only — real time and filament depend on settings, infill, and your printer.</p>
         </div>
       </div>
     </div>
@@ -732,15 +820,15 @@ const SEED = [
   {id:"s-batman",   title:"Batman Cowl — wearable",       maker:"Tommy Scruggs", source:"store", cat:"Masks & Busts", img:"assets/img/product-batman-cowl-v2.webp", glb:"batman.glb", likes:412, prints:186, added:"2026-08-10", tags:["batman","mask","wearable","hero"], desc:"The signature cowl. Sized to fit, with clean inner geometry so it prints fast without supports on most beds. A Tommy Labs original."},
   {id:"s-dragon",   title:"Dragon — display piece",        maker:"Tommy Scruggs", source:"store", cat:"Dragons", img:"assets/img/product-dragon.webp", glb:"dragon.glb", likes:528, prints:243, added:"2026-08-08", tags:["dragon","fantasy","display"], desc:"Big, mean, and heavily detailed. Prints in parts for easy post-processing. A community favourite from day one."},
   {id:"s-tiger",    title:"Tiger bust",                    maker:"Tommy Scruggs", source:"store", cat:"Figurines", img:"assets/img/product-tiger-v2.webp", glb:"tiger.glb", likes:391, prints:154, added:"2026-08-06", tags:["tiger","bust","animal"], desc:"Fierce tiger bust with layered mane detail. Looks great in matte black or a bronze silk."},
-  {id:"s-wolf",     title:"Wolf of Winter ashtray",        maker:"Tommy Scruggs", source:"store", cat:"Figurines", img:"assets/img/product-wolf-of-winter-ashtray-fierce-v2.webp", likes:274, prints:198, added:"2026-08-05", tags:["wolf","ashtray","utility"], desc:"A howling wolf ashtray that doubles as a desk ornament. One of the most-printed pieces in the store."},
-  {id:"s-owlbowl",  title:"Black owl bowl",                maker:"Tommy Scruggs", source:"store", cat:"Owls", img:"assets/img/product-black-owl-bowl-v2.webp", glb:"owl.glb", likes:319, prints:167, added:"2026-08-03", tags:["owl","bowl","home"], desc:"Owl-shaped catch-all bowl. Feathered texture reads beautifully in silk filaments."},
-  {id:"s-mando",    title:"Charcoal Mandalorian",          maker:"Tommy Scruggs", source:"store", cat:"Fans & Cosplay", img:"assets/img/product-charcoal-mandalorian-v2.webp", likes:356, prints:121, added:"2026-08-01", tags:["mandalorian","starwars","bust"], desc:"Charcoal-finish Mandalorian bust. All the beskar energy, none of the jetpack."},
-  {id:"s-eagle",    title:"Charcoal eagle",                maker:"Tommy Scruggs", source:"store", cat:"Figurines", img:"assets/img/product-charcoal-eagle-v2.webp", likes:208, prints:89, added:"2026-07-29", tags:["eagle","bird","display"], desc:"Soaring eagle with spread wings. Wing profile is tuned for a clean single-part print."},
-  {id:"s-reaper",   title:"Death Reaper",                  maker:"Tommy Scruggs", source:"store", cat:"Figurines", img:"assets/img/product-death-reaper-v2.webp", likes:267, prints:102, added:"2026-07-27", tags:["reaper","skull","gothic"], desc:"The Reaper. Hooded, scythe-ready, shelf-worthy. Prints beautifully in glow-in-the-dark PLA."},
-  {id:"s-goldowl",  title:"Golden owl",                    maker:"Tommy Scruggs", source:"store", cat:"Owls", img:"assets/img/product-owl-golden-v2.webp", likes:233, prints:95, added:"2026-07-25", tags:["owl","gold","display"], desc:"Regal golden owl — the centrepiece of the owl collection."},
-  {id:"s-trex",     title:"T-Rex skeleton",                maker:"Tommy Scruggs", source:"store", cat:"Figurines", img:"assets/img/product-trex-v2.webp", likes:301, prints:133, added:"2026-07-23", tags:["t-rex","dino","skeleton"], desc:"Mini T-Rex with poseable head. Kid-approved, desk-tested."},
-  {id:"s-castle",   title:"Purple dragon castle",          maker:"Tommy Scruggs", source:"store", cat:"Dragons", img:"assets/img/product-purple-dragon-castle-v2.webp", likes:188, prints:77, added:"2026-07-21", tags:["dragon","castle","fantasy"], desc:"A purple dragon coiled around a castle tower. Fairy-tale shelf energy."},
-  {id:"s-stag",     title:"Stag cup",                      maker:"Tommy Scruggs", source:"store", cat:"Home & Utility", img:"assets/img/product-stag-cup-v2.webp", likes:156, prints:64, added:"2026-07-19", tags:["stag","cup","drinkware"], desc:"Stag-horned cup with a comfortable grip. Dishwasher-friendly finish."},
+  {id:"s-wolf",     title:"Wolf of Winter ashtray",        maker:"Tommy Scruggs", source:"store", cat:"Figurines", img:"assets/img/product-wolf-of-winter-ashtray-fierce-v2.webp", glb:"wolf-of-winter-ashtray-fierce.glb", likes:274, prints:198, added:"2026-08-05", tags:["wolf","ashtray","utility"], desc:"A howling wolf ashtray that doubles as a desk ornament. One of the most-printed pieces in the store."},
+  {id:"s-owlbowl",  title:"Black owl bowl",                maker:"Tommy Scruggs", source:"store", cat:"Owls", img:"assets/img/product-black-owl-bowl-v2.webp", glb:"black-owl-bowl.glb", likes:319, prints:167, added:"2026-08-03", tags:["owl","bowl","home"], desc:"Owl-shaped catch-all bowl. Feathered texture reads beautifully in silk filaments."},
+  {id:"s-mando",    title:"Charcoal Mandalorian",          maker:"Tommy Scruggs", source:"store", cat:"Fans & Cosplay", img:"assets/img/product-charcoal-mandalorian-v2.webp", glb:"charcoal-mandalorian.glb", likes:356, prints:121, added:"2026-08-01", tags:["mandalorian","starwars","bust"], desc:"Charcoal-finish Mandalorian bust. All the beskar energy, none of the jetpack."},
+  {id:"s-eagle",    title:"Charcoal eagle",                maker:"Tommy Scruggs", source:"store", cat:"Figurines", img:"assets/img/product-charcoal-eagle-v2.webp", glb:"charcoal-eagle.glb", likes:208, prints:89, added:"2026-07-29", tags:["eagle","bird","display"], desc:"Soaring eagle with spread wings. Wing profile is tuned for a clean single-part print."},
+  {id:"s-reaper",   title:"Death Reaper",                  maker:"Tommy Scruggs", source:"store", cat:"Figurines", img:"assets/img/product-death-reaper-v2.webp", glb:"death-reaper.glb", likes:267, prints:102, added:"2026-07-27", tags:["reaper","skull","gothic"], desc:"The Reaper. Hooded, scythe-ready, shelf-worthy. Prints beautifully in glow-in-the-dark PLA."},
+  {id:"s-goldowl",  title:"Golden owl",                    maker:"Tommy Scruggs", source:"store", cat:"Owls", img:"assets/img/product-owl-golden-v2.webp", glb:"owl-golden.glb", likes:233, prints:95, added:"2026-07-25", tags:["owl","gold","display"], desc:"Regal golden owl — the centrepiece of the owl collection."},
+  {id:"s-trex",     title:"T-Rex skeleton",                maker:"Tommy Scruggs", source:"store", cat:"Figurines", img:"assets/img/product-trex-v2.webp", glb:"trex.glb", likes:301, prints:133, added:"2026-07-23", tags:["t-rex","dino","skeleton"], desc:"Mini T-Rex with poseable head. Kid-approved, desk-tested."},
+  {id:"s-castle",   title:"Purple dragon castle",          maker:"Tommy Scruggs", source:"store", cat:"Dragons", img:"assets/img/product-purple-dragon-castle-v2.webp", glb:"purple-dragon-castle.glb", likes:188, prints:77, added:"2026-07-21", tags:["dragon","castle","fantasy"], desc:"A purple dragon coiled around a castle tower. Fairy-tale shelf energy."},
+  {id:"s-stag",     title:"Stag cup",                      maker:"Tommy Scruggs", source:"store", cat:"Home & Utility", img:"assets/img/product-stag-cup-v2.webp", glb:"stag-cup.glb", likes:156, prints:64, added:"2026-07-19", tags:["stag","cup","drinkware"], desc:"Stag-horned cup with a comfortable grip. Dishwasher-friendly finish."},
   {id:"c-plant",    title:"Succulent planter skull",       maker:"Maria K.", source:"community", cat:"Home & Utility", likes:34, prints:12, added:"2026-08-14", status:"live", tags:["planter","skull","succulent"], desc:"A mini skull planter for succulents — holes in the back for drainage. Would love feedback on wall thickness!",
     svg:{g1:"#2dd4bf",g2:"#0e7490",e:"🪴"}},
   {id:"c-pen",      title:"Dragon pencil holder",          maker:"Devon R.", source:"community", cat:"Dragons", likes:27, prints:9, added:"2026-08-12", status:"live", tags:["pencil","desk","dragon"], desc:"A coiled dragon that holds pens and pencils. The tail curls around the base so it stays put.",
@@ -761,6 +849,7 @@ let state = {
   sort: "new",
   query: "",
   labImg: null,
+  labModel: null,
   labBusy: false,
 };
 if (!state.items) { state.items = JSON.parse(JSON.stringify(SEED)); persist(); }
@@ -1078,9 +1167,23 @@ function bindUpload(){
 /* ============================================================
    2D → 3D LAB
    ============================================================ */
+const PRINTERS = [
+  { id:"a1mini", name:"Bambu Lab A1 mini", bed:[180,180,180], gph:28 },
+  { id:"a1",     name:"Bambu Lab A1",       bed:[256,256,256], gph:38 },
+  { id:"p1s",    name:"Bambu Lab P1S",      bed:[256,256,256], gph:45 },
+  { id:"ender3", name:"Creality Ender-3 V3",bed:[220,220,250], gph:22 },
+  { id:"mk4",    name:"Prusa MK4",          bed:[250,210,220], gph:30 },
+  { id:"kobra2", name:"Anycubic Kobra 2",   bed:[220,220,250], gph:24 },
+];
+const PLA_G_PER_CM3 = 1.24;   // PLA density
+const RELIEF_MM = 120;        // longest side of a generated relief
+const RELIEF_H = 16;          // max raised height mm
+const RELIEF_BASE = 3;        // flat base thickness mm
+const GRID = 64;              // heightmap grid resolution
+
 function engineOnline(){ return !!(window.TOMMY_3D_ENGINE && window.TOMMY_3D_ENGINE.endpoint); }
+
 function renderLab(){
-  const eng = window.TOMMY_3D_ENGINE || {};
   const on = engineOnline();
   const banner = $("#engineBanner");
   const dot = $("#labDot"), outDot = $("#outDot");
@@ -1088,14 +1191,30 @@ function renderLab(){
     banner.style.display = on ? "flex" : "none";
     banner.innerHTML = on
       ? `<span>🟢</span><span><b>3D magic is on.</b> Pick a picture and watch it become a print.</span>`
-      : `<span>🟡</span><span><b>Almost ready.</b> Pick a picture — the crew is setting up the magic.</span>`;
-    banner.className = "engine-banner" + (on ? " on" : "");
+      : `<span>🟢</span><span><b>Built-in 3D maker is on.</b> Pick a picture, hit Make it 3D — you always get a model.</span>`;
+    banner.className = "engine-banner on";
   }
-  dot.className = "dot " + (on ? "on" : "off");
-  outDot.className = "dot " + (on ? "on" : "soon");
-  if (!on) setStage("empty");
-  else if (!state.labImg) setStage("empty");
+  dot.className = "dot on";
+  outDot.className = "dot on";
+  renderLabModels();
+  if (!state.labImg) setStage("empty");
+  else if (!state.labModel) setStage("empty");
 }
+
+function renderLabModels(){
+  const row = $("#labModelsRow");
+  if (!row) return;
+  const models = SEED.filter(i => i.glb);
+  row.innerHTML = models.map(i => `
+    <button class="lab-model-card${state.labModel && state.labModel.id === i.id ? " sel" : ""}" data-model="${esc(i.id)}">
+      <img src="${itemImg(i)}" alt="${esc(i.title)}" loading="lazy">
+      <div class="nm">${esc(i.title)}</div>
+    </button>`).join("");
+  row.querySelectorAll(".lab-model-card").forEach(c => {
+    c.onclick = () => loadStoreModel(c.dataset.model);
+  });
+}
+
 function setStage(kind, html){
   const stage = $("#labStage");
   if (kind === "empty") {
@@ -1106,20 +1225,251 @@ function setStage(kind, html){
     stage.innerHTML = `<div style="text-align:center"><div class="spin" style="margin:0 auto 14px"></div><p style="color:var(--muted);font-size:13px">${esc(html||"Working on it…")}</p></div>`;
   } else if (kind === "error") {
     stage.className = "stage empty";
-    stage.innerHTML = `<div><div class="icon" style="color:var(--red)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><p style="color:var(--red)">${esc(html||"That didn't work — try again.")}</p><button class="btn small" style="margin-top:12px" id="retryLab">Try again</button></div>`;
-    $("#retryLab")?.addEventListener("click", () => runEngine());
+    stage.innerHTML = `<div><div class="icon" style="color:var(--red)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><p style="color:var(--red)">${esc(html||"That didn't work — try again.")}</p></div>`;
   } else if (kind === "model") {
     stage.className = "stage";
-    stage.innerHTML = `<model-viewer src="${esc(html)}" alt="Generated 3D model" camera-controls auto-rotate shadow-intensity="1" exposure="1.1" style="width:100%;height:420px;background:radial-gradient(600px 400px at 50% 30%, #13203a, #0a0f1d)"></model-viewer>
+    stage.innerHTML = `<model-viewer id="labViewer" src="${esc(html)}" alt="Generated 3D model" camera-controls auto-rotate shadow-intensity="1" exposure="1.1" style="width:100%;height:420px;background:radial-gradient(600px 400px at 50% 30%, #13203a, #0a0f1d)"></model-viewer>
       <div style="margin-top:10px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-        <button class="btn small" id="labDownload" onclick="window.open('${esc(html)}','_blank')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>
-        <button class="btn small ghost" id="labAgain">Try another</button>
+        <button class="btn small ghost" id="labAgain"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg> Try another</button>
       </div>`;
-    $("#labAgain").onclick = () => { state.labImg = null; $("#labPreview").style.display = "none"; renderLab(); };
+    $("#labAgain").onclick = () => { state.labImg = null; state.labModel = null; $("#labPreview").style.display = "none"; $("#labGoBtn").style.display = "none"; $("#printPanel").style.display = "none"; renderLab(); };
   }
 }
+
+/* ---------- built-in photo → 3D relief generator (runs here, always returns a model) ---------- */
+function imageToHeightmap(dataUrl){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement("canvas");
+      c.width = GRID; c.height = GRID;
+      const ctx = c.getContext("2d");
+      ctx.drawImage(img, 0, 0, GRID, GRID);
+      const { data } = ctx.getImageData(0, 0, GRID, GRID);
+      const h = new Float32Array(GRID * GRID);
+      for (let i = 0; i < GRID * GRID; i++) {
+        const gray = (data[i*4] * 0.299 + data[i*4+1] * 0.587 + data[i*4+2] * 0.114) / 255;
+        h[i] = gray;
+      }
+      resolve(h);
+    };
+    img.onerror = reject;
+    img.src = dataUrl;
+  });
+}
+
+function heightmapToMesh(h){
+  const N = GRID;
+  const v = N * N;
+  const pos = new Float32Array(v * 3);
+  const norm = new Float32Array(v * 3);
+  const idx = [];
+  for (let y = 0; y < N; y++) {
+    for (let x = 0; x < N; x++) {
+      const i = y * N + x;
+      const g = h[i];
+      pos[i*3]   = (x / (N-1) - 0.5) * RELIEF_MM;
+      pos[i*3+1] = (y / (N-1) - 0.5) * RELIEF_MM;
+      pos[i*3+2] = RELIEF_BASE + g * RELIEF_H;
+    }
+  }
+  // smooth-ish normals from neighbors
+  for (let y = 0; y < N; y++) {
+    for (let x = 0; x < N; x++) {
+      const i = y * N + x;
+      const x0 = x > 0 ? h[i-1] : h[i];
+      const x1 = x < N-1 ? h[i+1] : h[i];
+      const y0 = y > 0 ? h[i-N] : h[i];
+      const y1 = y < N-1 ? h[i+N] : h[i];
+      const dzdx = (x1 - x0) / 2 * RELIEF_H / (RELIEF_MM / (N-1));
+      const dzdy = (y1 - y0) / 2 * RELIEF_H / (RELIEF_MM / (N-1));
+      let nx = -dzdx, ny = -dzdy, nz = 1;
+      const len = Math.hypot(nx, ny, nz);
+      norm[i*3] = nx/len; norm[i*3+1] = ny/len; norm[i*3+2] = nz/len;
+    }
+  }
+  for (let y = 0; y < N-1; y++) {
+    for (let x = 0; x < N-1; x++) {
+      const a = y*N + x, b = a + 1, c = a + N, d = c + 1;
+      idx.push(a, b, c, b, d, c);
+    }
+  }
+  return { pos, norm, idx, sizeMm: RELIEF_MM, heightMm: RELIEF_BASE + RELIEF_H };
+}
+
+function meshToGlb(m){
+  const { pos, norm, idx } = m;
+  // pad positions to 4-byte alignment for accessor starts
+  const pad = n => (4 - (n % 4)) % 4;
+  const bin = new ArrayBuffer(pos.byteLength + norm.byteLength + idx.length * 4 + 64);
+  const dv = new DataView(bin);
+  let off = 0;
+  const posStart = off; new Float32Array(bin, off, pos.length).set(pos); off += pos.byteLength; off += pad(off);
+  const normStart = off; new Float32Array(bin, off, norm.length).set(norm); off += norm.byteLength; off += pad(off);
+  const idxStart = off; const idxArr = new Uint32Array(bin, off, idx.length); idxArr.set(idx); off += idx.length * 4;
+  const min = [1e9,1e9,1e9], max = [-1e9,-1e9,-1e9];
+  for (let i = 0; i < pos.length; i += 3) {
+    for (let k = 0; k < 3; k++) {
+      min[k] = Math.min(min[k], pos[i+k]);
+      max[k] = Math.max(max[k], pos[i+k]);
+    }
+  }
+  const json = {
+    asset: { version: "2.0", generator: "tommylabs-catalog" },
+    scene: 0, scenes: [{ nodes: [0] }], nodes: [{ mesh: 0 }],
+    meshes: [{ primitives: [{
+      attributes: { POSITION: 0, NORMAL: 1 },
+      indices: 2, mode: 4, material: 0
+    }] }],
+    materials: [{ pbrMetallicRoughness: { baseColorFactor: [0.92, 0.95, 1, 1], metallicFactor: 0.02, roughnessFactor: 0.9 } }],
+    accessors: [
+      { bufferView: 0, componentType: 5126, count: pos.length/3, type: "VEC3", min, max },
+      { bufferView: 1, componentType: 5126, count: norm.length/3, type: "VEC3" },
+      { bufferView: 2, componentType: 5125, count: idx.length, type: "SCALAR" }
+    ],
+    bufferViews: [
+      { buffer: 0, byteOffset: posStart, byteLength: pos.byteLength },
+      { buffer: 0, byteOffset: normStart, byteLength: norm.byteLength },
+      { buffer: 0, byteOffset: idxStart, byteLength: idx.length * 4 }
+    ],
+    buffers: [{ byteLength: off }]
+  };
+  const jsonStr = JSON.stringify(json);
+  const jsonPad = (4 - ((jsonStr.length + 20) % 4)) % 4;   // JSON chunk starts at 20, must end 4-aligned
+  const jsonLen = jsonStr.length + jsonPad;
+  const binHeader = 20 + jsonLen;                          // 12 header + 8 chunk header + JSON
+  const total = binHeader + 8 + off;                       // + BIN chunk header (8) + binary
+  const glb = new ArrayBuffer(total);
+  const gv = new DataView(glb);
+  gv.setUint32(0, 0x46546C67, true); // glTF
+  gv.setUint32(4, 2, true);
+  gv.setUint32(8, total, true);
+  gv.setUint32(12, jsonLen, true);
+  gv.setUint32(16, 0x4E4F534A, true); // JSON
+  new TextEncoder().encodeInto(jsonStr, new Uint8Array(glb, 20, jsonStr.length));
+  new Uint8Array(glb, 20 + jsonStr.length, jsonPad).fill(0x20); // JSON chunk padded with spaces
+  gv.setUint32(binHeader, off, true);
+  gv.setUint32(binHeader + 4, 0x004E4942, true); // BIN
+  new Uint8Array(glb, binHeader + 8).set(new Uint8Array(bin, 0, off));
+  return new Blob([glb], { type: "model/gltf-binary" });
+}
+
+function meshToStl(m){
+  const { pos, idx } = m;
+  const triCount = idx.length / 3;
+  const buf = new ArrayBuffer(84 + triCount * 50);
+  const dv = new DataView(buf);
+  const header = "Tommy Labs relief " + new Date().toISOString().slice(0,10);
+  for (let i = 0; i < 80; i++) dv.setUint8(i, header.charCodeAt(i) || 0);
+  dv.setUint32(80, triCount, true);
+  let off = 84;
+  for (let t = 0; t < triCount; t++) {
+    const a = idx[t*3]*3, b = idx[t*3+1]*3, c = idx[t*3+2]*3;
+    const ax=pos[a],ay=pos[a+1],az=pos[a+2],bx=pos[b],by=pos[b+1],bz=pos[b+2],cx=pos[c],cy=pos[c+1],cz=pos[c+2];
+    const ux=bx-ax,uy=by-ay,uz=bz-az,vx=cx-ax,vy=cy-ay,vz=cz-az;
+    let nx=uy*vz-uz*vy, ny=uz*vx-ux*vz, nz=ux*vy-uy*vx;
+    const len=Math.hypot(nx,ny,nz)||1; nx/=len;ny/=len;nz/=len;
+    dv.setFloat32(off, nx, true); dv.setFloat32(off+4, ny, true); dv.setFloat32(off+8, nz, true);
+    dv.setFloat32(off+12, ax, true); dv.setFloat32(off+16, ay, true); dv.setFloat32(off+20, az, true);
+    dv.setFloat32(off+24, bx, true); dv.setFloat32(off+28, by, true); dv.setFloat32(off+32, bz, true);
+    dv.setFloat32(off+36, cx, true); dv.setFloat32(off+40, cy, true); dv.setFloat32(off+44, cz, true);
+    dv.setUint16(off+48, 0, true);
+    off += 50;
+  }
+  return new Blob([buf], { type: "model/stl" });
+}
+
+function meshVolumeCm3(m){
+  // rough volume: footprint × average height (generated relief is a solid slab with raised top)
+  const avgH = RELIEF_BASE + (RELIEF_H / 2);
+  return (RELIEF_MM * RELIEF_MM * avgH) / 1000; // mm3 -> cm3
+}
+
+/* ---------- print estimates ---------- */
+let labCurrent = null; // { kind:"photo"|"store", dimsMm:[w,d,h], volCm3, stlBlob?, storeUrl?, name }
+
+function fillMachineSelect(){
+  const sel = $("#printMachine");
+  if (!sel || sel.options.length) return;
+  sel.innerHTML = PRINTERS.map((p,i) => `<option value="${p.id}">${p.name} — ${p.bed[0]}×${p.bed[1]}×${p.bed[2]} mm</option>`).join("");
+  sel.onchange = updatePrintEstimates;
+}
+
+function updatePrintEstimates(){
+  if (!labCurrent) return;
+  const p = PRINTERS.find(x => x.id === $("#printMachine").value) || PRINTERS[0];
+  const [w,d,h] = labCurrent.dimsMm;
+  $("#printFilament").textContent = Math.max(1, Math.round(labCurrent.volCm3 * PLA_G_PER_CM3)) + " g";
+  const hours = labCurrent.volCm3 * PLA_G_PER_CM3 / p.gph;
+  const hh = Math.floor(hours), mm = Math.round((hours - hh) * 60);
+  $("#printTime").textContent = hh > 0 ? `${hh}h ${mm}m` : `${mm}m`;
+  $("#printSize").textContent = `${Math.round(w)}×${Math.round(d)}×${Math.round(h)} mm`;
+  const warn = $("#printWarn");
+  const tooBig = [w,d,h].some((v,i) => v > p.bed[i] + 2);
+  if (tooBig) {
+    warn.style.display = "block";
+    warn.textContent = `This model is too big for the ${p.name} bed (${p.bed[0]}×${p.bed[1]}×${p.bed[2]} mm). Pick a bigger machine.`;
+  } else {
+    warn.style.display = "none";
+  }
+  const dl = $("#printDownload");
+  const store = $("#printStore");
+  if (labCurrent.kind === "photo" && labCurrent.stlBlob) {
+    dl.style.display = "inline-flex";
+    dl.onclick = () => {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(labCurrent.stlBlob);
+      a.download = "tommylabs-relief.stl";
+      a.click();
+      toast("STL downloaded — ready to slice 🖨️");
+    };
+    store.style.display = "none";
+  } else {
+    dl.style.display = "none";
+    store.style.display = labCurrent.kind === "store" ? "inline-flex" : "none";
+  }
+}
+
+function showPrintPanel(){
+  fillMachineSelect();
+  $("#printPanel").style.display = "block";
+  updatePrintEstimates();
+}
+
+/* ---------- load a store model into the lab ---------- */
+function loadStoreModel(id){
+  const it = SEED.find(i => i.id === id && i.glb);
+  if (!it) return;
+  state.labModel = { id: it.id, glb: it.glb, title: it.title };
+  $("#labPreview").style.display = "none";
+  $("#labGoBtn").style.display = "none";
+  setStage("busy", "Loading " + it.title + "…");
+  const url = STORE_GLB_BASE + it.glb;
+  setTimeout(() => {
+    setStage("model", url);
+    const mv = $("#labViewer");
+    const onLoad = () => {
+      try {
+        const d = mv.getDimensions(); // meters — raw scene units vary per model
+        let dimsMm = [d.x * 1000, d.y * 1000, d.z * 1000];
+        // Normalize to a typical print size (~200mm on the longest side) so the
+        // filament/time estimates are sensible regardless of the GLB's authored scale.
+        const longest = Math.max(...dimsMm);
+        if (longest > 240) {
+          const k = 200 / longest;
+          dimsMm = dimsMm.map(v => v * k);
+        }
+        const volCm3 = (dimsMm[0] * dimsMm[1] * dimsMm[2]) / 1000 * 0.35; // ~35% infill-solid equivalent
+        labCurrent = { kind: "store", dimsMm, volCm3, storeUrl: "https://tommylabs.store" };
+        showPrintPanel();
+      } catch (e) {}
+    };
+    if (mv) { mv.addEventListener("load", onLoad); setTimeout(onLoad, 2500); }
+  }, 50);
+}
+
+/* ---------- run the lab: engine first, built-in generator as the guaranteed path ---------- */
 async function runEngine(){
-  if (!engineOnline()) { toast("Engine not installed yet — slot is ready ⚙️"); return; }
   const eng = window.TOMMY_3D_ENGINE;
   setStage("busy", "Sending your picture to the engine…");
   try {
@@ -1135,17 +1485,50 @@ async function runEngine(){
     setStage("model", url);
     toast("3D model ready 🧊");
   } catch (err) {
-    setStage("error", "Engine call failed: " + err.message);
+    setStage("error", "Engine call failed — using the built-in maker.");
+    setTimeout(buildRelief, 400);
   }
 }
+
+async function buildRelief(){
+  if (!state.labImg) return;
+  setStage("busy", "Making your 3D model…");
+  try {
+    const h = await imageToHeightmap(state.labImg);
+    const mesh = heightmapToMesh(h);
+    const glbBlob = meshToGlb(mesh);
+    const stlBlob = meshToStl(mesh);
+    const url = URL.createObjectURL(glbBlob);
+    state.labModel = { kind: "photo" };
+    labCurrent = {
+      kind: "photo",
+      dimsMm: [RELIEF_MM, RELIEF_MM, mesh.heightMm],
+      volCm3: meshVolumeCm3(mesh),
+      stlBlob
+    };
+    setStage("model", url);
+    showPrintPanel();
+    toast("3D model ready 🧊");
+  } catch (err) {
+    setStage("error", "Couldn't make that one — try a different picture.");
+  }
+}
+
 function bindLab(){
   const pick = setupDrop($("#labDrop"), $("#labFile"), dataUrl => {
     state.labImg = dataUrl;
+    state.labModel = null;
+    labCurrent = null;
+    $("#printPanel").style.display = "none";
     const pv = $("#labPreview");
     pv.src = dataUrl; pv.style.display = "block";
-    if (engineOnline()) runEngine();
-    else setStage("empty");
+    $("#labGoBtn").style.display = "inline-flex";
+    setStage("empty");
   });
+  $("#labGoBtn").onclick = () => {
+    if (engineOnline()) runEngine();
+    else buildRelief();
+  };
   /* paste anywhere in the lab view */
   document.addEventListener("paste", e => {
     if (!$("#view-lab").classList.contains("active")) return;
@@ -1155,10 +1538,13 @@ function bindLab(){
     const f = item.getAsFile();
     if (f) handleFile(f, dataUrl => {
       state.labImg = dataUrl;
+      state.labModel = null;
+      labCurrent = null;
+      $("#printPanel").style.display = "none";
       const pv = $("#labPreview");
       pv.src = dataUrl; pv.style.display = "block";
-      if (engineOnline()) runEngine();
-      else setStage("empty");
+      $("#labGoBtn").style.display = "inline-flex";
+      setStage("empty");
     });
   });
 }
