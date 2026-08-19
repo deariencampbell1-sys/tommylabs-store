@@ -1373,8 +1373,47 @@ function setStage(kind, html){
   }
 }
 
-/* ---------- built-in photo → 3D relief generator (runs here, always returns a model) ---------- */
-function imageToHeightmap(dataUrl){
+/* ---------- built-in photo → 3D relief generator (runs here, always returns a model) ----------
+   Real monocular depth estimation (Depth Anything V2 Small, ~25M params, ONNX, quantized ~27MB),
+   via transformers.js -- runs entirely on the visitor's own device (WebGPU if available, else
+   WASM/CPU). No server, no GPU rented, no per-request cost, scales to any number of concurrent
+   visitors for free. Falls back to a plain luminance heightmap only if the model can't load
+   (offline, very old browser) so the Lab never breaks. */
+let __depthPipelinePromise = null;
+function getDepthPipeline(onProgress){
+  if (!__depthPipelinePromise) {
+    __depthPipelinePromise = import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.2.0")
+      .then(({ pipeline }) => pipeline(
+        "depth-estimation",
+        "onnx-community/depth-anything-v2-small",
+        { dtype: "q8", progress_callback: onProgress }
+      ));
+  }
+  return __depthPipelinePromise;
+}
+
+function resampleToGrid(raw){
+  // raw: {data: Uint8Array, width, height, channels:1} grayscale depth image -> GRID x GRID [0,1]
+  const c = document.createElement("canvas");
+  c.width = raw.width; c.height = raw.height;
+  const ctx = c.getContext("2d");
+  const img = ctx.createImageData(raw.width, raw.height);
+  for (let i = 0; i < raw.width * raw.height; i++) {
+    const v = raw.data[i];
+    img.data[i*4] = v; img.data[i*4+1] = v; img.data[i*4+2] = v; img.data[i*4+3] = 255;
+  }
+  ctx.putImageData(img, 0, 0);
+  const c2 = document.createElement("canvas");
+  c2.width = GRID; c2.height = GRID;
+  const ctx2 = c2.getContext("2d");
+  ctx2.drawImage(c, 0, 0, GRID, GRID);
+  const { data } = ctx2.getImageData(0, 0, GRID, GRID);
+  const h = new Float32Array(GRID * GRID);
+  for (let i = 0; i < GRID * GRID; i++) h[i] = data[i*4] / 255; // near = high value = raised
+  return h;
+}
+
+async function imageToHeightmapLuminance(dataUrl){
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
@@ -1393,6 +1432,17 @@ function imageToHeightmap(dataUrl){
     img.onerror = reject;
     img.src = dataUrl;
   });
+}
+
+async function imageToHeightmap(dataUrl, onProgress){
+  try {
+    const depther = await getDepthPipeline(onProgress);
+    const out = await depther(dataUrl);
+    return resampleToGrid(out.depth);
+  } catch (err) {
+    console.warn("Depth model unavailable, using luminance fallback:", err);
+    return imageToHeightmapLuminance(dataUrl);
+  }
 }
 
 function heightmapToMesh(h){
@@ -1918,9 +1968,15 @@ async function runEngine(){
 
 async function buildRelief(){
   if (!state.labImg) return;
-  setStage("busy", "Making your 3D model…");
+  setStage("busy", "Loading the 3D depth model (one-time download, ~27MB)…");
   try {
-    const h = await imageToHeightmap(state.labImg);
+    const h = await imageToHeightmap(state.labImg, (p) => {
+      if (p && p.status === "progress" && typeof p.progress === "number") {
+        setStage("busy", `Loading the 3D depth model… ${Math.round(p.progress)}%`);
+      } else if (p && p.status === "ready") {
+        setStage("busy", "Estimating depth from your photo…");
+      }
+    });
     const mesh = heightmapToMesh(h);
     const glbBlob = meshToGlb(mesh);
     const stlBlob = meshToStl(mesh);
