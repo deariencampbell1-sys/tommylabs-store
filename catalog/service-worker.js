@@ -1,6 +1,6 @@
 /* Tommy's Labs — Catalog service worker (app shell + runtime cache)
    Same shape as the main store's SW so the phone app feels identical. */
-const VERSION = 'tommylabs-catalog-v1';
+const VERSION = 'tommylabs-catalog-v2';
 const PRECACHE = VERSION + '-precache';
 const RUNTIME = VERSION + '-runtime';
 
