@@ -868,6 +868,17 @@ const STORE_GLB_BASE = "https://tommylabs.store/models-webp/";
 const LS_ITEMS = "tlc.items.v1";
 const LS_POSTS = "tlc.posts.v1";
 const AVATAR_COLORS = ["#38bdf8","#a78bfa","#4ade80","#fbbf24","#f87171","#22d3ee","#f472b6","#fb923c"];
+/* Full URL for a model: local catalog GLBs (assets/...) are relative; store
+   models live on tommylabs.store under models-webp/. */
+function modelUrl(it){
+  if (!it || !it.glb) return "";
+  if (it.glb.startsWith("assets/") || it.glb.startsWith("http")) return it.glb;
+  return STORE_GLB_BASE + it.glb;
+}
+function stlUrl(it){
+  if (!it || !it.stl) return "";
+  return it.stl; // local STL files ship with the catalog
+}
 
 /* Deterministic ratings for seeded items (rating 1-5 + how many people rated).
    Community/pending items start at 0 with no votes until people rate them. */
@@ -875,10 +886,16 @@ const SEED_RATINGS = {
   "s-batman": {r:4.9, n:124}, "s-dragon": {r:4.8, n:211}, "s-tiger": {r:4.7, n:97},
   "s-wolf":   {r:4.6, n:83},  "s-owlbowl":{r:4.5, n:71}, "s-mando":  {r:4.8, n:109},
   "s-eagle":  {r:4.4, n:52},  "s-reaper": {r:4.7, n:88}, "s-goldowl":{r:4.6, n:64},
-  "s-trex":   {r:4.8, n:76},  "s-castle": {r:4.5, n:58}, "s-stag":   {r:4.3, n:41}
+  "s-trex":   {r:4.8, n:76},  "s-castle": {r:4.5, n:58}, "s-stag":   {r:4.3, n:41},
+  "kc-heart": {r:4.6, n:23}, "kc-star": {r:4.7, n:31}, "kc-bat": {r:4.8, n:27},
+  "kc-skull": {r:4.5, n:19}, "kc-paw": {r:4.7, n:25}, "kc-rocket": {r:4.6, n:17},
+  "kc-owl": {r:4.5, n:14}, "kc-trex": {r:4.8, n:29}, "kc-ghost": {r:4.4, n:16},
+  "kc-hex": {r:4.6, n:21}, "kc-mushroom": {r:4.5, n:18}, "kc-sword": {r:4.7, n:26},
+  "kc-fish": {r:4.4, n:15}, "kc-moon": {r:4.6, n:20}, "kc-bolt": {r:4.7, n:24},
+  "kc-dragon": {r:4.8, n:33}
 };
 
-const CATEGORIES = ["All","Figurines","Dragons","Owls","Masks & Busts","Home & Utility","Fans & Cosplay","Other"];
+const CATEGORIES = ["All","Keychains","Figurines","Dragons","Owls","Masks & Busts","Home & Utility","Fans & Cosplay","Other"];
 
 const SEED = [
   {id:"s-batman",   title:"Batman Cowl — wearable",       maker:"Tommy Scruggs", source:"store", cat:"Masks & Busts", img:"assets/img/product-batman-cowl-v2.webp", glb:"batman.glb", likes:412, prints:186, added:"2026-08-10", tags:["batman","mask","wearable","hero"], desc:"The signature cowl. Sized to fit, with clean inner geometry so it prints fast without supports on most beds. A Tommy Labs original."},
@@ -893,14 +910,22 @@ const SEED = [
   {id:"s-trex",     title:"T-Rex skeleton",                maker:"Tommy Scruggs", source:"store", cat:"Figurines", img:"assets/img/product-trex-v2.webp", glb:"trex.glb", likes:301, prints:133, added:"2026-07-23", tags:["t-rex","dino","skeleton"], desc:"Mini T-Rex with poseable head. Kid-approved, desk-tested."},
   {id:"s-castle",   title:"Purple dragon castle",          maker:"Tommy Scruggs", source:"store", cat:"Dragons", img:"assets/img/product-purple-dragon-castle-v2.webp", glb:"purple-dragon-castle.glb", likes:188, prints:77, added:"2026-07-21", tags:["dragon","castle","fantasy"], desc:"A purple dragon coiled around a castle tower. Fairy-tale shelf energy."},
   {id:"s-stag",     title:"Stag cup",                      maker:"Tommy Scruggs", source:"store", cat:"Home & Utility", img:"assets/img/product-stag-cup-v2.webp", glb:"stag-cup.glb", likes:156, prints:64, added:"2026-07-19", tags:["stag","cup","drinkware"], desc:"Stag-horned cup with a comfortable grip. Dishwasher-friendly finish."},
-  {id:"c-plant",    title:"Succulent planter skull",       maker:"Maria K.", source:"community", cat:"Home & Utility", likes:34, prints:12, added:"2026-08-14", status:"live", tags:["planter","skull","succulent"], desc:"A mini skull planter for succulents — holes in the back for drainage. Would love feedback on wall thickness!",
-    svg:{g1:"#2dd4bf",g2:"#0e7490",e:"🪴"}},
-  {id:"c-pen",      title:"Dragon pencil holder",          maker:"Devon R.", source:"community", cat:"Dragons", likes:27, prints:9, added:"2026-08-12", status:"live", tags:["pencil","desk","dragon"], desc:"A coiled dragon that holds pens and pencils. The tail curls around the base so it stays put.",
-    svg:{g1:"#a78bfa",g2:"#6d28d9",e:"✏️"}},
-  {id:"c-phone",    title:"Wave phone stand",              maker:"Jules T.", source:"community", cat:"Home & Utility", likes:19, prints:6, added:"2026-08-15", status:"pending", tags:["phone","stand","wave"], desc:"A wave-shaped phone stand. The curve props any phone at a good angle for video calls.",
-    svg:{g1:"#38bdf8",g2:"#0369a1",e:"📱"}},
-  {id:"c-key",      title:"Hex keychain set",              maker:"Sam P.", source:"community", cat:"Other", likes:12, prints:4, added:"2026-08-13", status:"pending", tags:["keychain","hex","minimal"], desc:"A set of hex-shaped keychains — print them in different colors and trade them.",
-    svg:{g1:"#fbbf24",g2:"#b45309",e:"🔑"}},
+  {id:"kc-heart",   title:"Heart Keychain",     maker:"Tommy Scruggs", source:"store", cat:"Keychains", img:"assets/keychains/img/heart.webp", glb:"assets/keychains/glb/heart.glb", stl:"assets/keychains/stl/heart.stl", likes:36, prints:6, added:"2026-08-19", tags:["keychain","heart","small"], desc:"Small, fast print — about 20m on a Bambu A1 mini, ~2 g. Ready to send to your printer."},
+  {id:"kc-star",    title:"Star Keychain",      maker:"Tommy Scruggs", source:"store", cat:"Keychains", img:"assets/keychains/img/star.webp", glb:"assets/keychains/glb/star.glb", stl:"assets/keychains/stl/star.stl", likes:28, prints:2, added:"2026-08-19", tags:["keychain","star","small"], desc:"Small, fast print — about 20m on a Bambu A1 mini, ~2 g. Ready to send to your printer."},
+  {id:"kc-bat",     title:"Bat Keychain",       maker:"Tommy Scruggs", source:"store", cat:"Keychains", img:"assets/keychains/img/bat.webp", glb:"assets/keychains/glb/bat.glb", stl:"assets/keychains/stl/bat.stl", likes:12, prints:4, added:"2026-08-19", tags:["keychain","bat","small"], desc:"Small, fast print — about 20m on a Bambu A1 mini, ~3 g. Ready to send to your printer."},
+  {id:"kc-skull",   title:"Skull Keychain",     maker:"Tommy Scruggs", source:"store", cat:"Keychains", img:"assets/keychains/img/skull.webp", glb:"assets/keychains/glb/skull.glb", stl:"assets/keychains/stl/skull.stl", likes:32, prints:8, added:"2026-08-19", tags:["keychain","skull","small"], desc:"Small, fast print — about 20m on a Bambu A1 mini, ~2 g. Ready to send to your printer."},
+  {id:"kc-paw",     title:"Paw Keychain",       maker:"Tommy Scruggs", source:"store", cat:"Keychains", img:"assets/keychains/img/paw.webp", glb:"assets/keychains/glb/paw.glb", stl:"assets/keychains/stl/paw.stl", likes:12, prints:10, added:"2026-08-19", tags:["keychain","paw","small"], desc:"Small, fast print — about 20m on a Bambu A1 mini, ~5 g. Ready to send to your printer."},
+  {id:"kc-rocket",  title:"Rocket Keychain",    maker:"Tommy Scruggs", source:"store", cat:"Keychains", img:"assets/keychains/img/rocket.webp", glb:"assets/keychains/glb/rocket.glb", stl:"assets/keychains/stl/rocket.stl", likes:4, prints:1, added:"2026-08-19", tags:["keychain","rocket","small"], desc:"Small, fast print — about 20m on a Bambu A1 mini, ~1 g. Ready to send to your printer."},
+  {id:"kc-owl",     title:"Owl Keychain",       maker:"Tommy Scruggs", source:"store", cat:"Keychains", img:"assets/keychains/img/owl.webp", glb:"assets/keychains/glb/owl.glb", stl:"assets/keychains/stl/owl.stl", likes:4, prints:1, added:"2026-08-19", tags:["keychain","owl","small"], desc:"Small, fast print — about 20m on a Bambu A1 mini, ~2 g. Ready to send to your printer."},
+  {id:"kc-trex",    title:"T-Rex Keychain",     maker:"Tommy Scruggs", source:"store", cat:"Keychains", img:"assets/keychains/img/trex.webp", glb:"assets/keychains/glb/trex.glb", stl:"assets/keychains/stl/trex.stl", likes:4, prints:14, added:"2026-08-19", tags:["keychain","trex","small"], desc:"Small, fast print — about 20m on a Bambu A1 mini, ~2 g. Ready to send to your printer."},
+  {id:"kc-ghost",   title:"Ghost Keychain",     maker:"Tommy Scruggs", source:"store", cat:"Keychains", img:"assets/keychains/img/ghost.webp", glb:"assets/keychains/glb/ghost.glb", stl:"assets/keychains/stl/ghost.stl", likes:12, prints:8, added:"2026-08-19", tags:["keychain","ghost","small"], desc:"Small, fast print — about 20m on a Bambu A1 mini, ~3 g. Ready to send to your printer."},
+  {id:"kc-hex",     title:"Hex Nut Keychain",   maker:"Tommy Scruggs", source:"store", cat:"Keychains", img:"assets/keychains/img/hex.webp", glb:"assets/keychains/glb/hex.glb", stl:"assets/keychains/stl/hex.stl", likes:24, prints:6, added:"2026-08-19", tags:["keychain","hex","small"], desc:"Small, fast print — about 20m on a Bambu A1 mini, ~3 g. Ready to send to your printer."},
+  {id:"kc-mushroom",title:"Mushroom Keychain",  maker:"Tommy Scruggs", source:"store", cat:"Keychains", img:"assets/keychains/img/mushroom.webp", glb:"assets/keychains/glb/mushroom.glb", stl:"assets/keychains/stl/mushroom.stl", likes:16, prints:1, added:"2026-08-19", tags:["keychain","mushroom","small"], desc:"Small, fast print — about 20m on a Bambu A1 mini, ~2 g. Ready to send to your printer."},
+  {id:"kc-sword",   title:"Sword Keychain",     maker:"Tommy Scruggs", source:"store", cat:"Keychains", img:"assets/keychains/img/sword.webp", glb:"assets/keychains/glb/sword.glb", stl:"assets/keychains/stl/sword.stl", likes:32, prints:6, added:"2026-08-19", tags:["keychain","sword","small"], desc:"Small, fast print — about 20m on a Bambu A1 mini, ~1 g. Ready to send to your printer."},
+  {id:"kc-fish",    title:"Fish Keychain",      maker:"Tommy Scruggs", source:"store", cat:"Keychains", img:"assets/keychains/img/fish.webp", glb:"assets/keychains/glb/fish.glb", stl:"assets/keychains/stl/fish.stl", likes:8, prints:4, added:"2026-08-19", tags:["keychain","fish","small"], desc:"Small, fast print — about 20m on a Bambu A1 mini, ~2 g. Ready to send to your printer."},
+  {id:"kc-moon",    title:"Moon Keychain",      maker:"Tommy Scruggs", source:"store", cat:"Keychains", img:"assets/keychains/img/moon.webp", glb:"assets/keychains/glb/moon.glb", stl:"assets/keychains/stl/moon.stl", likes:4, prints:16, added:"2026-08-19", tags:["keychain","moon","small"], desc:"Small, fast print — about 20m on a Bambu A1 mini, ~1 g. Ready to send to your printer."},
+  {id:"kc-bolt",    title:"Lightning Bolt Keychain", maker:"Tommy Scruggs", source:"store", cat:"Keychains", img:"assets/keychains/img/bolt.webp", glb:"assets/keychains/glb/bolt.glb", stl:"assets/keychains/stl/bolt.stl", likes:36, prints:1, added:"2026-08-19", tags:["keychain","bolt","small"], desc:"Small, fast print — about 20m on a Bambu A1 mini, ~1 g. Ready to send to your printer."},
+  {id:"kc-dragon",  title:"Dragon Keychain",    maker:"Tommy Scruggs", source:"store", cat:"Keychains", img:"assets/keychains/img/dragon.webp", glb:"assets/keychains/glb/dragon.glb", stl:"assets/keychains/stl/dragon.stl", likes:28, prints:8, added:"2026-08-19", tags:["keychain","dragon","small"], desc:"Small, fast print — about 20m on a Bambu A1 mini, ~1 g. Ready to send to your printer."},
 ];
 
 /* ============================================================
@@ -1129,7 +1154,7 @@ function renderItem(id){
   const dateStr = new Date(it.added).toLocaleDateString(undefined, {month:"short", day:"numeric", year:"numeric"});
 
   const viewerHtml = it.glb ? `
-    <model-viewer id="mv" src="${STORE_GLB_BASE}${it.glb}" alt="${esc(it.title)}" camera-controls auto-rotate shadow-intensity="1" exposure="1.1" tone-mapping="neutral" style="width:100%;height:520px;background:radial-gradient(600px 400px at 50% 30%, #13203a, #0a0f1d)">
+    <model-viewer id="mv" src="${esc(modelUrl(it))}" alt="${esc(it.title)}" camera-controls auto-rotate shadow-intensity="1" exposure="1.1" tone-mapping="neutral" style="width:100%;height:520px;background:radial-gradient(600px 400px at 50% 30%, #13203a, #0a0f1d)">
       <button slot="ar-button" style="display:none"></button>
     </model-viewer>` : "";
 
@@ -1315,7 +1340,8 @@ function renderLab(){
 function renderLabModels(){
   const row = $("#labModelsRow");
   if (!row) return;
-  const models = SEED.filter(i => i.glb);
+  const models = SEED.filter(i => i.glb)
+    .sort((a, b) => (a.cat === "Keychains" ? -1 : 1) - (b.cat === "Keychains" ? -1 : 1));
   row.innerHTML = models.map(i => `
     <button class="lab-model-card${state.labModel && state.labModel.id === i.id ? " sel" : ""}" data-model="${esc(i.id)}">
       <img src="${itemImg(i)}" alt="${esc(i.title)}" loading="lazy">
@@ -1648,8 +1674,26 @@ function renderItemPrintProfile(it, containerSel){
   </div>`;
   fillMachineSelect("#ipMachine", () => updateItemPrintEstimates());
   bindItemPrintActions(it);
+  // Prefer the shipped STL file (instant, Bambu-ready); otherwise convert GLB.
+  const shipped = stlUrl(it);
+  if (shipped) {
+    fetch(shipped).then(r => r.ok ? r.blob() : Promise.reject(new Error("fetch"))).then(blob => {
+      // compute from ArrayBuffer for the signed volume
+      blob.arrayBuffer().then(buf => {
+        const volCm3 = stlVolumeCm3(buf);
+        const dimsMm = [60, 60, 3.2]; // generated keychains are 60mm slabs
+        itemCurrent = {
+          kind: "store", dimsMm, volCm3, stlBlob: blob,
+          fileName: shipped.split("/").pop(),
+          storeUrl: "https://tommylabs.store"
+        };
+        updateItemPrintEstimates();
+      });
+    }).catch(() => {});
+    return;
+  }
   // async: convert the GLB to a printable STL + estimate dims
-  fetch(STORE_GLB_BASE + it.glb).then(r => {
+  fetch(modelUrl(it)).then(r => {
     if (!r.ok) throw new Error("fetch");
     return r.arrayBuffer();
   }).then(buf => {
@@ -1732,6 +1776,21 @@ function triSoupVolumeCm3Scaled(pos, idx, scale){
   return Math.abs(vol) / 1000; // mm3 -> cm3
 }
 
+function stlVolumeCm3(blobBuf){
+  // binary STL: 80-byte header + uint32 count + 50 bytes per triangle (12 floats + attr)
+  const dv = new DataView(blobBuf);
+  const count = dv.getUint32(80, true);
+  let vol = 0;
+  for (let t = 0; t < count; t++) {
+    const o = 84 + t * 50;
+    const ax=dv.getFloat32(o+12,true), ay=dv.getFloat32(o+16,true), az=dv.getFloat32(o+20,true);
+    const bx=dv.getFloat32(o+24,true), by=dv.getFloat32(o+28,true), bz=dv.getFloat32(o+32,true);
+    const cx=dv.getFloat32(o+36,true), cy=dv.getFloat32(o+40,true), cz=dv.getFloat32(o+44,true);
+    vol += (ax*(by*cz-bz*cy) - ay*(bx*cz-bz*cx) + az*(bx*cy-by*cx)) / 6;
+  }
+  return Math.abs(vol) / 1000; // mm3 -> cm3
+}
+
 function updateItemPrintEstimates(){
   if (!itemCurrent) return;
   const p = PRINTERS.find(x => x.id === $("#ipMachine").value) || PRINTERS[0];
@@ -1785,7 +1844,7 @@ function loadStoreModel(id){
   $("#labPreview").style.display = "none";
   $("#labGoBtn").style.display = "none";
   setStage("busy", "Loading " + it.title + "…");
-  const url = STORE_GLB_BASE + it.glb;
+  const url = modelUrl(it);
   setTimeout(() => {
     setStage("model", url);
     const mv = $("#labViewer");
@@ -1806,7 +1865,21 @@ function loadStoreModel(id){
       } catch (e) {}
     };
     if (mv) { mv.addEventListener("load", onLoad); setTimeout(onLoad, 2500); }
-    // also convert to STL so Send to Bambu Lab works for store models
+    // Ship the STL when present (instant Bambu-ready); otherwise convert GLB.
+    const shippedStl = stlUrl(it);
+    if (shippedStl) {
+      fetch(shippedStl).then(r => r.ok ? r.blob() : Promise.reject(new Error("fetch"))).then(blob => {
+        blob.arrayBuffer().then(buf => {
+          if (labCurrent) {
+            labCurrent.stlBlob = blob;
+            labCurrent.volCm3 = stlVolumeCm3(buf);
+            labCurrent.fileName = shippedStl.split("/").pop();
+            updatePrintEstimates();
+          }
+        });
+      }).catch(() => {});
+      return;
+    }
     fetch(url).then(r => r.ok ? r.arrayBuffer() : Promise.reject(new Error("fetch"))).then(buf => {
       try {
         const mesh = glbToMesh(buf);

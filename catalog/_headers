@@ -5,6 +5,14 @@
   Cache-Control: public, max-age=60
 /assets/img/*
   Cache-Control: public, max-age=2592000
+/assets/keychains/img/*
+  Cache-Control: public, max-age=2592000
+/assets/keychains/stl/*
+  Cache-Control: public, max-age=2592000
+  Access-Control-Allow-Origin: *
+/assets/keychains/glb/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
 /vendor/*
   Cache-Control: public, max-age=31536000, immutable
 /index.html
