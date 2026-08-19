@@ -1,0 +1,162 @@
+[
+  {
+    "slug": "heart",
+    "name": "Heart Keychain",
+    "color": "#f43f5e",
+    "img": "assets/keychains/img/heart.webp",
+    "stl": "assets/keychains/stl/heart.stl",
+    "glb": "assets/keychains/glb/heart.glb",
+    "vol_cm3": 1.79,
+    "tris": 17196
+  },
+  {
+    "slug": "star",
+    "name": "Star Keychain",
+    "color": "#fbbf24",
+    "img": "assets/keychains/img/star.webp",
+    "stl": "assets/keychains/stl/star.stl",
+    "glb": "assets/keychains/glb/star.glb",
+    "vol_cm3": 1.69,
+    "tris": 15788
+  },
+  {
+    "slug": "bat",
+    "name": "Bat Keychain",
+    "color": "#7c3aed",
+    "img": "assets/keychains/img/bat.webp",
+    "stl": "assets/keychains/stl/bat.stl",
+    "glb": "assets/keychains/glb/bat.glb",
+    "vol_cm3": 2.45,
+    "tris": 22612
+  },
+  {
+    "slug": "skull",
+    "name": "Skull Keychain",
+    "color": "#e2e8f0",
+    "img": "assets/keychains/img/skull.webp",
+    "stl": "assets/keychains/stl/skull.stl",
+    "glb": "assets/keychains/glb/skull.glb",
+    "vol_cm3": 1.37,
+    "tris": 12392
+  },
+  {
+    "slug": "paw",
+    "name": "Paw Keychain",
+    "color": "#f59e0b",
+    "img": "assets/keychains/img/paw.webp",
+    "stl": "assets/keychains/stl/paw.stl",
+    "glb": "assets/keychains/glb/paw.glb",
+    "vol_cm3": 4.29,
+    "tris": 39052
+  },
+  {
+    "slug": "rocket",
+    "name": "Rocket Keychain",
+    "color": "#38bdf8",
+    "img": "assets/keychains/img/rocket.webp",
+    "stl": "assets/keychains/stl/rocket.stl",
+    "glb": "assets/keychains/glb/rocket.glb",
+    "vol_cm3": 1.13,
+    "tris": 10044
+  },
+  {
+    "slug": "owl",
+    "name": "Owl Keychain",
+    "color": "#a78bfa",
+    "img": "assets/keychains/img/owl.webp",
+    "stl": "assets/keychains/stl/owl.stl",
+    "glb": "assets/keychains/glb/owl.glb",
+    "vol_cm3": 1.8,
+    "tris": 16524
+  },
+  {
+    "slug": "trex",
+    "name": "T-Rex Keychain",
+    "color": "#4ade80",
+    "img": "assets/keychains/img/trex.webp",
+    "stl": "assets/keychains/stl/trex.stl",
+    "glb": "assets/keychains/glb/trex.glb",
+    "vol_cm3": 1.22,
+    "tris": 10724
+  },
+  {
+    "slug": "ghost",
+    "name": "Ghost Keychain",
+    "color": "#cbd5e1",
+    "img": "assets/keychains/img/ghost.webp",
+    "stl": "assets/keychains/stl/ghost.stl",
+    "glb": "assets/keychains/glb/ghost.glb",
+    "vol_cm3": 2.13,
+    "tris": 19052
+  },
+  {
+    "slug": "hex",
+    "name": "Hex Nut Keychain",
+    "color": "#94a3b8",
+    "img": "assets/keychains/img/hex.webp",
+    "stl": "assets/keychains/stl/hex.stl",
+    "glb": "assets/keychains/glb/hex.glb",
+    "vol_cm3": 2.33,
+    "tris": 21984
+  },
+  {
+    "slug": "mushroom",
+    "name": "Mushroom Keychain",
+    "color": "#f87171",
+    "img": "assets/keychains/img/mushroom.webp",
+    "stl": "assets/keychains/stl/mushroom.stl",
+    "glb": "assets/keychains/glb/mushroom.glb",
+    "vol_cm3": 1.73,
+    "tris": 15696
+  },
+  {
+    "slug": "sword",
+    "name": "Sword Keychain",
+    "color": "#60a5fa",
+    "img": "assets/keychains/img/sword.webp",
+    "stl": "assets/keychains/stl/sword.stl",
+    "glb": "assets/keychains/glb/sword.glb",
+    "vol_cm3": 0.87,
+    "tris": 8232
+  },
+  {
+    "slug": "fish",
+    "name": "Fish Keychain",
+    "color": "#22d3ee",
+    "img": "assets/keychains/img/fish.webp",
+    "stl": "assets/keychains/stl/fish.stl",
+    "glb": "assets/keychains/glb/fish.glb",
+    "vol_cm3": 1.42,
+    "tris": 13648
+  },
+  {
+    "slug": "moon",
+    "name": "Moon Keychain",
+    "color": "#818cf8",
+    "img": "assets/keychains/img/moon.webp",
+    "stl": "assets/keychains/stl/moon.stl",
+    "glb": "assets/keychains/glb/moon.glb",
+    "vol_cm3": 0.74,
+    "tris": 6244
+  },
+  {
+    "slug": "bolt",
+    "name": "Lightning Bolt Keychain",
+    "color": "#facc15",
+    "img": "assets/keychains/img/bolt.webp",
+    "stl": "assets/keychains/stl/bolt.stl",
+    "glb": "assets/keychains/glb/bolt.glb",
+    "vol_cm3": 0.6,
+    "tris": 6156
+  },
+  {
+    "slug": "dragon",
+    "name": "Dragon Keychain",
+    "color": "#10b981",
+    "img": "assets/keychains/img/dragon.webp",
+    "stl": "assets/keychains/stl/dragon.stl",
+    "glb": "assets/keychains/glb/dragon.glb",
+    "vol_cm3": 0.78,
+    "tris": 7748
+  }
+]
