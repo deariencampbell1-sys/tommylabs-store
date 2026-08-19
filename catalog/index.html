@@ -962,7 +962,28 @@ let state = {
   labModel: null,
   labBusy: false,
 };
-if (!state.items) { state.items = JSON.parse(JSON.stringify(SEED)); persist(); }
+if (!state.items) {
+  state.items = JSON.parse(JSON.stringify(SEED));
+  persist();
+} else {
+  /* Reconcile with SEED: store items are re-shipped in every deploy (new
+     products, fixed images/links) and must win over a stale cached copy,
+     while user-driven fields (likes/prints/comments) and any non-seed
+     items (community uploads, pending review) persist across visits. */
+  const storedById = new Map(state.items.map(it => [it.id, it]));
+  const seedIds = new Set(SEED.map(it => it.id));
+  const reconciled = SEED.map(seedItem => {
+    const existing = storedById.get(seedItem.id);
+    return existing
+      ? { ...seedItem, likes: existing.likes ?? seedItem.likes, prints: existing.prints ?? seedItem.prints,
+          comments: existing.comments ?? seedItem.comments, rating: existing.rating, ratingCount: existing.ratingCount }
+      : seedItem;
+  });
+  const nonSeedItems = state.items.filter(it => !seedIds.has(it.id));
+  const changed = reconciled.length + nonSeedItems.length !== state.items.length;
+  state.items = reconciled.concat(nonSeedItems);
+  if (changed) persist();
+}
 if (!state.posts) { state.posts = []; persist(); }
 /* attach seeded ratings to items that don't have one yet */
 state.items.forEach(it => {
