@@ -1637,7 +1637,24 @@ function renderHome(){
    dynamically-inserted grid (images past the first screen never fired a request
    even when scrolled into view). IntersectionObserver is explicit and controllable. */
 let _lazyObserver = null;
+function loadIfNearViewport(img){
+  const r = img.getBoundingClientRect();
+  const margin = window.innerHeight || 800;
+  if (r.bottom >= -margin && r.top <= (window.innerHeight || 800) + margin) {
+    img.src = img.dataset.src;
+    img.removeAttribute("data-src");
+    return true;
+  }
+  return false;
+}
 function observeLazyThumbs(container){
+  /* Synchronous first pass: getBoundingClientRect doesn't depend on the
+     compositor being active, so this guarantees the current screen's worth
+     of images load immediately even if IntersectionObserver dispatch is
+     ever delayed (e.g. a backgrounded tab on first paint). */
+  const all = container.querySelectorAll("img.lazy-thumb[data-src]");
+  all.forEach(loadIfNearViewport);
+  armScrollFallback();
   if (!("IntersectionObserver" in window)) {
     container.querySelectorAll("img.lazy-thumb[data-src]").forEach(img => {
       img.src = img.dataset.src; img.removeAttribute("data-src");
@@ -1656,6 +1673,21 @@ function observeLazyThumbs(container){
     }, { rootMargin: "600px 0px" });
   }
   container.querySelectorAll("img.lazy-thumb[data-src]").forEach(img => _lazyObserver.observe(img));
+}
+/* Belt-and-suspenders: a throttled scroll/resize fallback in case
+   IntersectionObserver dispatch is ever delayed or missed. */
+let _scrollFallbackArmed = false;
+function armScrollFallback(){
+  if (_scrollFallbackArmed) return;
+  _scrollFallbackArmed = true;
+  let ticking = false;
+  const check = () => {
+    document.querySelectorAll("img.lazy-thumb[data-src]").forEach(loadIfNearViewport);
+    ticking = false;
+  };
+  const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(check); } };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll, { passive: true });
 }
 function cardHtml(i){
   const badge = i.source === "store"
