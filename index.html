@@ -1074,14 +1074,30 @@
   const modalViewer = document.getElementById('modalViewer');
   const viewerTitle = document.getElementById('viewerTitle');
   function open3D(model, title) {
-    modalViewer.setAttribute('src', model);
+    // Rebuild the model-viewer element on every open so a stale src can
+    // never survive from a previous model (older model-viewer builds keep
+    // showing the last model when src is just swapped on an existing node).
+    const holder = document.querySelector('.viewer-modal-box');
+    const old = document.getElementById('modalViewer');
+    const fresh = document.createElement('model-viewer');
+    fresh.id = 'modalViewer';
+    fresh.className = 'modal-viewer';
+    fresh.setAttribute('camera-controls', '');
+    fresh.setAttribute('interaction-prompt', 'none');
+    fresh.setAttribute('exposure', '1.15');
+    fresh.setAttribute('tone-mapping', 'aces');
+    fresh.setAttribute('camera-orbit', '25deg 78deg auto');
+    fresh.innerHTML = '<directional-light intensity="1.7" color="#ffffff" position="2 3 1"></directional-light><directional-light intensity="0.9" color="#60a5fa" position="-2 -1 -1"></directional-light>';
+    old.replaceWith(fresh);
+    fresh.setAttribute('src', model);
     viewerTitle.textContent = title;
     viewerModal.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
   function close3D() {
     viewerModal.classList.remove('open');
-    modalViewer.removeAttribute('src');
+    const cur = document.getElementById('modalViewer');
+    if (cur) cur.removeAttribute('src');
     document.body.style.overflow = '';
   }
   document.getElementById('viewerClose').addEventListener('click', close3D);
