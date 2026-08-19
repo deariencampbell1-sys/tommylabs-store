@@ -1620,6 +1620,7 @@ function renderHome(){
   }
   grid.innerHTML = list.map(cardHtml).join("");
   grid.querySelectorAll(".card").forEach(c => c.onclick = () => go("item", c.dataset.id));
+  observeLazyThumbs(grid);
 
   /* rail: fresh uploads */
   const fresh = [...state.items].sort((a,b) => new Date(b.added) - new Date(a.added)).slice(0, 5);
@@ -1632,6 +1633,30 @@ function renderHome(){
 
   renderPosts();
 }
+/* real lazy-loading for the grid -- native loading="lazy" was unreliable on this
+   dynamically-inserted grid (images past the first screen never fired a request
+   even when scrolled into view). IntersectionObserver is explicit and controllable. */
+let _lazyObserver = null;
+function observeLazyThumbs(container){
+  if (!("IntersectionObserver" in window)) {
+    container.querySelectorAll("img.lazy-thumb[data-src]").forEach(img => {
+      img.src = img.dataset.src; img.removeAttribute("data-src");
+    });
+    return;
+  }
+  if (!_lazyObserver) {
+    _lazyObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const img = entry.target;
+        img.src = img.dataset.src;
+        img.removeAttribute("data-src");
+        _lazyObserver.unobserve(img);
+      });
+    }, { rootMargin: "600px 0px" });
+  }
+  container.querySelectorAll("img.lazy-thumb[data-src]").forEach(img => _lazyObserver.observe(img));
+}
 function cardHtml(i){
   const badge = i.source === "store"
     ? `<span class="badge store">STORE</span>`
@@ -1643,7 +1668,7 @@ function cardHtml(i){
   const isNew = (Date.now() - new Date(i.added).getTime()) < 3*864e5;
   return `<div class="card" data-id="${esc(i.id)}">
     <div class="card-thumb">
-      <img src="${itemImg(i)}" alt="${esc(i.title)}">
+      <img class="lazy-thumb" data-src="${itemImg(i)}" alt="${esc(i.title)}">
       ${badge}${isNew?'<span class="badge new" style="left:auto;right:9px">NEW</span>':""}
       ${i.glb ? '<span class="card-3d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> 3D</span>' : ""}
     </div>
