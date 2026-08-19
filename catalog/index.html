@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tommy Labs Maker Catalog — Community 3D Print Ideas</title>
-<meta name="description" content="The Tommy Labs community catalog. Browse ideas, upload your own, and turn 2D pictures into 3D prints.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23090d16'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%2338bdf8' font-family='Arial' font-weight='bold'%3ETL%3C/text%3E%3C/svg%3E">
+<title>Tommy Labs Maker Catalog — Cool Ideas to Print</title>
+<meta name="description" content="Cool 3D print ideas from Tommy and his crew. See something you like? Tap it, spin it, print it.">
+<link rel="icon" href="assets/img/favicon.ico">
+<link rel="apple-touch-icon" href="assets/img/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/img/icon-192.png">
 <style>
   :root{
     --bg:#090d16; --bg2:#0d1322; --bg3:#111a2e;
@@ -32,6 +34,8 @@
   button{font-family:inherit;cursor:pointer}
   img{display:block;max-width:100%}
   input,textarea,select{font-family:inherit}
+  .ic{width:1.1em;height:1.1em;vertical-align:-0.18em;display:inline-block}
+  .btn .ic{margin-right:4px}
 
   /* ---------- header ---------- */
   header{
@@ -44,15 +48,9 @@
     display:flex;align-items:center;gap:14px;flex-wrap:wrap;
   }
   .brand{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
-  .brand-mark{
-    width:38px;height:38px;border-radius:11px;flex:none;
-    background:linear-gradient(135deg,#0e2a44,#0a1526);
-    border:1px solid var(--cyan-dim);
-    display:grid;place-items:center;font-weight:800;font-size:15px;color:var(--cyan);
-    letter-spacing:.5px;box-shadow:0 0 18px rgba(56,189,248,.25);
-  }
+  .logo-img{height:44px;width:auto;border-radius:10px;display:block;box-shadow:0 2px 10px rgba(0,0,0,.45)}
+  .brand small{display:block;font-weight:600;font-size:9.5px;color:var(--cyan);letter-spacing:2.5px;line-height:1}
   .brand-name{font-weight:800;font-size:16px;letter-spacing:.4px;line-height:1.05}
-  .brand-name small{display:block;font-weight:600;font-size:10px;color:var(--cyan);letter-spacing:2.5px}
   .searchbox{
     flex:1;min-width:180px;max-width:380px;position:relative;
   }
@@ -62,20 +60,21 @@
     transition:border-color .15s;
   }
   .searchbox input:focus{border-color:var(--cyan-dim)}
-  .searchbox::before{
-    content:'🔍';position:absolute;left:12px;top:50%;transform:translateY(-50%);
-    font-size:13px;opacity:.7;
-  }
+  .searchbox svg.ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--faint)}
   nav{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
   .navbtn{
     background:transparent;border:1px solid transparent;color:var(--muted);
     padding:9px 15px;border-radius:999px;font-size:13.5px;font-weight:600;
-    transition:all .15s;white-space:nowrap;
+    transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;
   }
   .navbtn:hover{color:var(--text);background:var(--bg3)}
   .navbtn.active{color:#071019;background:var(--cyan);border-color:var(--cyan)}
   .navbtn.accent{color:var(--cyan);border-color:var(--cyan-dim)}
   .navbtn.accent:hover{background:rgba(56,189,248,.12);color:var(--cyan)}
+  @media(max-width:640px){
+    .brand small{display:none}
+    .navbtn{padding:8px 11px;font-size:12.5px}
+  }
 
   /* ---------- layout ---------- */
   main{flex:1;width:100%;max-width:1200px;margin:0 auto;padding:22px 18px 60px}
@@ -86,23 +85,24 @@
   /* ---------- hero ---------- */
   .hero{
     position:relative;overflow:hidden;border-radius:22px;
-    border:1px solid var(--line);padding:38px 34px;margin-bottom:26px;
+    border:1px solid var(--line);padding:40px 34px;margin-bottom:26px;
     background:
-      linear-gradient(120deg, rgba(14,42,68,.95), rgba(13,18,34,.92) 55%, rgba(17,26,46,.92)),
-      url('assets/img/product-dragon.webp') center/cover no-repeat;
+      linear-gradient(120deg, rgba(9,16,32,.96), rgba(13,18,34,.9) 60%, rgba(17,26,46,.82)),
+      url('assets/img/lab-room.webp') center/cover no-repeat;
   }
-  .hero::after{
+  .hero::before{
     content:'';position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(600px 260px at 85% 20%, rgba(56,189,248,.14), transparent 65%);
+    background:radial-gradient(600px 260px at 85% 20%, rgba(56,189,248,.12), transparent 65%);
   }
-  .hero-inner{position:relative;z-index:1;max-width:640px}
+  .hero-inner{position:relative;z-index:1;display:flex;align-items:center;gap:34px;flex-wrap:wrap}
+  .hero-text{flex:1;min-width:280px;max-width:560px}
   .hero-tag{
     display:inline-flex;align-items:center;gap:7px;
     background:rgba(56,189,248,.12);border:1px solid var(--cyan-dim);
     color:var(--cyan);font-size:11.5px;font-weight:700;letter-spacing:1.6px;
     padding:5px 12px;border-radius:999px;margin-bottom:16px;
   }
-  .hero h1{font-size:clamp(26px,4.4vw,40px);line-height:1.12;margin-bottom:12px;font-weight:800}
+  .hero h1{font-size:clamp(28px,4.6vw,44px);line-height:1.12;margin-bottom:12px;font-weight:800}
   .hero h1 span{color:var(--cyan)}
   .hero p{color:var(--muted);font-size:15px;line-height:1.6;margin-bottom:22px;max-width:540px}
   .hero-cta{display:flex;gap:10px;flex-wrap:wrap}
@@ -121,6 +121,31 @@
   }
   .hero-stats .stat b{display:block;font-size:22px;color:var(--text)}
   .hero-stats .stat span{font-size:11.5px;color:var(--faint);letter-spacing:1.2px;text-transform:uppercase}
+  /* hero media: Tommy's picture, like the main site */
+  .hero-media{flex:0 0 auto;text-align:center}
+  .portrait-frame{
+    position:relative;width:clamp(130px,16vw,190px);height:clamp(130px,16vw,190px);
+    border-radius:50%;padding:5px;
+    background:linear-gradient(135deg,#2563eb,#38bdf8);
+    box-shadow:0 0 34px rgba(56,189,248,.4), 0 14px 40px rgba(0,0,0,.5);
+  }
+  .portrait-frame img{width:100%;height:100%;object-fit:cover;border-radius:50%;border:4px solid #0a1220;display:block}
+  .chip-float{
+    position:absolute;display:inline-flex;align-items:center;gap:6px;
+    background:rgba(13,19,34,.92);border:1px solid var(--cyan-dim);color:var(--text);
+    padding:6px 12px;border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap;
+    backdrop-filter:blur(8px);box-shadow:0 6px 18px rgba(0,0,0,.4);
+  }
+  .chip-float.c1{top:6%;right:-8%;animation:floaty 5s ease-in-out infinite}
+  .chip-float.c2{bottom:8%;left:-10%;animation:floaty 6s ease-in-out infinite reverse}
+  .chip-float .ic{color:var(--cyan)}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  @media(max-width:760px){
+    .hero-inner{justify-content:center;text-align:center}
+    .hero-cta,.hero-stats{justify-content:center}
+    .chip-float.c1{right:0}
+    .chip-float.c2{left:0}
+  }
 
   /* ---------- toolbar ---------- */
   .toolbar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
@@ -372,16 +397,17 @@
 <header>
   <div class="hdr-inner">
     <div class="brand" id="brandBtn" title="Tommy Labs Maker Catalog">
-      <div class="brand-mark">TL</div>
-      <div class="brand-name">TOMMY LABS<small>MAKER CATALOG</small></div>
+      <img src="assets/img/logo.webp" alt="Tommy's Labs" class="logo-img">
+      <div class="brand-name" style="line-height:1.1">TOMMY LABS<small>MAKER CATALOG</small></div>
     </div>
     <div class="searchbox">
-      <input id="searchInput" type="search" placeholder="Search the catalog…" autocomplete="off">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="searchInput" type="search" placeholder="Find an idea…" autocomplete="off">
     </div>
     <nav>
-      <button class="navbtn active" data-nav="home">Home</button>
-      <button class="navbtn" data-nav="upload">Upload idea</button>
-      <button class="navbtn accent" data-nav="lab">2D → 3D Lab</button>
+      <button class="navbtn active" data-nav="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Ideas</button>
+      <button class="navbtn" data-nav="upload"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Add yours</button>
+      <button class="navbtn accent" data-nav="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M10 2v6.5L4.5 18a2 2 0 0 0 1.8 3h11.4a2 2 0 0 0 1.8-3L14 8.5V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg> 2D → 3D</button>
     </nav>
   </div>
 </header>
@@ -392,17 +418,26 @@
   <section class="view active" id="view-home">
     <div class="hero">
       <div class="hero-inner">
-        <div class="hero-tag">⚡ THE MAKER COMMUNITY OF TOMMY LABS</div>
-        <h1>Browse. Share. <span>Print.</span><br>Ideas for your next build.</h1>
-        <p>This is the hangout for everything Tommy Labs — scroll the catalog for fresh ideas, drop your own designs for the community, and when the 2D→3D engine lands, turn a plain picture into a print-ready model right here.</p>
-        <div class="hero-cta">
-          <button class="btn" data-nav="upload">🚀 Upload your idea</button>
-          <button class="btn ghost" data-nav="lab">🧪 Try the 2D → 3D Lab</button>
+        <div class="hero-text">
+          <div class="hero-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> FROM TOMMY'S PRINT SHOP</div>
+          <h1>Ideas from <span>Tommy's</span> crew.<br>Made to print.</h1>
+          <p>Cool stuff Tommy and his friends make. See something you like? Tap it, spin it, print it.</p>
+          <div class="hero-cta">
+            <button class="btn" data-nav="upload"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Add your idea</button>
+            <button class="btn ghost" data-nav="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="m12 3 1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> Picture → 3D</button>
+          </div>
+          <div class="hero-stats">
+            <div class="stat"><b id="statItems">0</b><span>Ideas</span></div>
+            <div class="stat"><b id="statMakers">0</b><span>Makers</span></div>
+            <div class="stat"><b id="statLikes">0</b><span>Likes</span></div>
+          </div>
         </div>
-        <div class="hero-stats">
-          <div class="stat"><b id="statItems">0</b><span>Ideas</span></div>
-          <div class="stat"><b id="statMakers">0</b><span>Makers</span></div>
-          <div class="stat"><b id="statLikes">0</b><span>Likes</span></div>
+        <div class="hero-media">
+          <div class="portrait-frame">
+            <img src="assets/img/tommy-portrait.webp" alt="Tommy Scruggs">
+            <span class="chip-float c1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Printed by Tommy</span>
+            <span class="chip-float c2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg> 100% original</span>
+          </div>
         </div>
       </div>
     </div>
@@ -423,19 +458,18 @@
       <div class="grid" id="itemGrid"></div>
       <aside class="rail">
         <div class="panel lab-status-card">
-          <h3>2D → 3D Lab</h3>
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M10 2v6.5L4.5 18a2 2 0 0 0 1.8 3h11.4a2 2 0 0 0 1.8-3L14 8.5V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg> Picture → 3D</h3>
           <div class="status-row">
             <span class="dot off" id="labDot"></span>
-            <b id="labStatusText">Engine slot ready</b>
-            <span id="labStatusState">standby</span>
+            <b id="labStatusText">Turn a picture into a print</b>
           </div>
-          <button class="btn small" data-nav="lab" style="width:100%;justify-content:center">Open the Lab</button>
+          <button class="btn small" data-nav="lab" style="width:100%;justify-content:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="m12 3 1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> Try it</button>
         </div>
 
         <div class="panel">
-          <h3>🛠 The Workbench</h3>
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> The Workbench</h3>
           <div class="postbox">
-            <textarea id="postText" placeholder="Hang out — say what you're printing…"></textarea>
+            <textarea id="postText" placeholder="Say hi — what are you printing?"></textarea>
             <div class="row">
               <input id="postName" placeholder="Your name" maxlength="24">
               <button class="btn small" id="postBtn">Post</button>
@@ -445,7 +479,7 @@
         </div>
 
         <div class="panel">
-          <h3>🔥 Fresh uploads</h3>
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Fresh ideas</h3>
           <div id="freshList"></div>
         </div>
       </aside>
@@ -463,20 +497,20 @@
   <!-- ================= UPLOAD ================= -->
   <section class="view" id="view-upload">
     <div class="upload-wrap">
-      <h1>🚀 Upload an idea</h1>
-      <p class="sub">Share a design, a sketch, or a photo of something you want printed. Community uploads land in the catalog as <b style="color:var(--purple)">Community</b> items and show as pending until Tommy's crew checks them out.</p>
+      <h1><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Add your idea</h1>
+      <p class="sub">Drop in a picture of something cool you want printed. Tommy's crew will see it.</p>
 
       <div class="dropzone" id="upDrop">
-        <div class="big">🖼️</div>
-        <b>Drop an image here or click to browse</b>
-        <p>PNG / JPG / WebP — max ~8 MB. We shrink it automatically.<br>No image? You can still post a text-only idea below.</p>
+        <div class="big"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:44px;height:44px"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></div>
+        <b>Tap to pick a picture</b>
+        <p>Photo, sketch, or anything you like.<br>It gets added as an idea for the crew.</p>
         <img class="preview" id="upPreview" style="display:none" alt="preview">
       </div>
       <input type="file" id="upFile" accept="image/*" hidden>
 
       <div class="field">
-        <label>Title *</label>
-        <input id="upTitle" maxlength="80" placeholder="e.g. Articulated dragon keychain">
+        <label>What is it?</label>
+        <input id="upTitle" maxlength="80" placeholder="e.g. Cool dragon">
       </div>
       <div class="field">
         <label>Category</label>
@@ -491,65 +525,51 @@
         </select>
       </div>
       <div class="field">
-        <label>Describe your idea</label>
-        <textarea id="upDesc" maxlength="600" placeholder="What is it? Rough size? What filament colors would look good? Anything helps the community and the print crew…"></textarea>
+        <label>Tell us about it</label>
+        <textarea id="upDesc" maxlength="600" placeholder="Size, colors, anything that helps…"></textarea>
       </div>
       <div class="field">
         <label>Tags</label>
-        <input id="upTags" maxlength="120" placeholder="comma, separated, tags">
+        <input id="upTags" maxlength="120" placeholder="cool, dragon, red">
       </div>
       <div class="field">
         <label>Your name</label>
-        <input id="upName" maxlength="24" placeholder="Maker name">
+        <input id="upName" maxlength="24" placeholder="Your name">
       </div>
 
       <div class="upload-actions">
-        <button class="btn" id="upSubmit">Publish to catalog</button>
-        <span class="hint" id="upNote">Stored in this browser for now — the live backend hooks up later.</span>
+        <button class="btn" id="upSubmit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Share it</button>
+        <span class="hint" id="upNote">Saved in this browser for now.</span>
       </div>
-      <p class="fineprint">By publishing you agree this is your own idea or you have permission to share it. Tommy Labs may feature great community ideas in the store. No files leave your browser while this preview runs — the engine slot is where the real pipeline plugs in.</p>
     </div>
   </section>
 
   <!-- ================= 2D → 3D LAB ================= -->
   <section class="view" id="view-lab">
     <div class="lab-wrap">
-      <h1>🧪 The 2D → 3D Lab</h1>
-      <p class="sub">Paste or drop a picture and this slot turns it into a 3D model for printing. The engine isn't installed yet — the slot is wired and waiting, so the moment Tommy plugs in the engine, this page goes live with zero changes to the rest of the site.</p>
+      <h1><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="m12 3 1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg> Picture → 3D</h1>
+      <p class="sub">Pick a picture and turn it into a 3D print.</p>
 
-      <div class="engine-banner" id="engineBanner">
-        <span>🟡</span><span><b>Engine slot ready — no engine installed yet.</b> Paste a picture below anyway to try the flow; the moment the engine is configured the result appears in the viewer on the right.</span>
-      </div>
+      <div class="engine-banner on" id="engineBanner" style="display:none"></div>
 
       <div class="lab-grid">
         <div class="lab-drop" id="labDrop">
-          <div class="big">📸</div>
-          <b>Paste or drop a 2D picture</b>
-          <p>Ctrl/⌘ + V works right after clicking here.<br>Any photo, sketch, or reference of what you want printed.</p>
-          <p><kbd>Ctrl</kbd> + <kbd>V</kbd></p>
+          <div class="big"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:44px;height:44px"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+          <b>Pick a picture</b>
+          <p>Tap to choose a photo,<br>or paste one right here.</p>
           <img class="preview" id="labPreview" style="display:none" alt="2d input">
         </div>
         <input type="file" id="labFile" accept="image/*" hidden>
 
         <div class="lab-out">
-          <div class="head"><span class="dot soon" id="outDot"></span> 3D output</div>
+          <div class="head"><span class="dot soon" id="outDot"></span> 3D model</div>
           <div class="stage empty" id="labStage">
             <div>
-              <div class="icon">🛠️</div>
-              <p>Drop a picture on the left and the generated 3D model will appear here — ready to spin, inspect, and hand to the printer.</p>
+              <div class="icon">🧊</div>
+              <p>Your 3D model shows up here, ready to spin and print.</p>
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="lab-slot">
-        <h3>⚙️ ENGINE SLOT — INSTALL PANEL</h3>
-        <p>This is the integration point. Configure one object and the Lab goes live for everyone. The engine just needs to accept a 2D image and hand back a printable <code>.glb</code> model URL.</p>
-        <pre id="slotCode"></pre>
-        <details class="slot-details">
-          <summary>How to install the engine (for the crew with credentials)</summary>
-          <p style="margin-top:10px">Open <code>catalog/index.html</code>, find the block labeled <code>TOMMY_3D_ENGINE</code> at the top of the script, and fill in your engine's endpoint. Contract: <code>POST { image: &lt;dataURL&gt;, prompt: &lt;text&gt; }</code> → <code>{ modelUrl: "https://…/model.glb" }</code>. The Lab already renders any returned GLB in the viewer and falls back gracefully when the slot is empty.</p>
-        </details>
       </div>
     </div>
   </section>
@@ -557,8 +577,9 @@
 </main>
 
 <footer>
-  <p>© 2026 <a href="https://tommylabs.store" target="_blank" rel="noopener">Tommy Labs</a> — 3D printed creations by Tommy Scruggs · <a href="https://tommylabs.store" target="_blank" rel="noopener">Visit the store</a></p>
-  <p style="margin-top:5px">Catalog is community-powered — everything lives in your browser while the backend is being built.</p>
+  <p><img src="assets/img/logo.webp" alt="Tommy's Labs" class="logo-img" style="height:30px;margin:0 auto 10px;border-radius:7px"></p>
+  <p>© 2026 <a href="https://tommylabs.store" target="_blank" rel="noopener">Tommy Labs</a> — 3D printed creations by <a href="https://tommylabs.store" target="_blank" rel="noopener">Tommy Scruggs</a></p>
+  <p style="margin-top:5px;color:var(--faint)">Made with ❤️ for the Tommy Labs crew.</p>
 </footer>
 
 <div id="toast"></div>
@@ -729,7 +750,7 @@ function renderHome(){
   const list = filtered();
   const grid = $("#itemGrid");
   if (!list.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="icon">🔍</div><b>Nothing found</b>Try a different search or category — or be the first to upload it.</div>`;
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div><b>Nothing found</b>Try a different search — or be the first to add it.</div>`;
     return;
   }
   grid.innerHTML = list.map(cardHtml).join("");
@@ -757,13 +778,13 @@ function cardHtml(i){
     <div class="card-thumb">
       <img src="${itemImg(i)}" alt="${esc(i.title)}" loading="lazy">
       ${badge}${isNew?'<span class="badge new" style="left:auto;right:9px">NEW</span>':""}
-      ${i.glb ? '<span class="card-3d">🧊 3D</span>' : ""}
+      ${i.glb ? '<span class="card-3d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> 3D</span>' : ""}
     </div>
     <div class="card-body">
       <div class="card-title">${esc(i.title)}</div>
       <div class="card-meta"><span class="maker">${esc(i.maker)}</span>·<span>${esc(i.cat)}</span></div>
       <div class="card-stats">
-        <span>❤️ ${i.likes}</span><span>🖨️ ${i.prints}</span><span>💬 ${(i.comments||[]).length}</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg> ${i.likes}</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> ${i.prints}</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> ${(i.comments||[]).length}</span>
       </div>
     </div>
   </div>`;
@@ -800,7 +821,7 @@ function addPost(){
 function renderItem(id){
   const it = state.items.find(i => i.id === id);
   const box = $("#itemDetail");
-  if (!it) { box.innerHTML = `<div class="empty-state"><div class="icon">🫥</div><b>Idea not found</b>It may have been removed.</div>`; return; }
+  if (!it) { box.innerHTML = `<div class="empty-state"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg></div><b>Idea not found</b>It may have been removed.</div>`; return; }
 
   const isNew = (Date.now() - new Date(it.added).getTime()) < 3*864e5;
   const badge = it.source === "store"
@@ -825,19 +846,19 @@ function renderItem(id){
         <div><div class="who">${esc(it.maker)}</div><div class="when">added ${dateStr}</div></div>
       </div>
       <div class="stat-pills">
-        <span class="pill">❤️ <b>${it.likes}</b> likes</span>
-        <span class="pill">🖨️ <b>${it.prints}</b> prints</span>
-        <span class="pill">🏷 ${esc(it.cat)}</span>
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg> <b>${it.likes}</b></span>
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> <b>${it.prints}</b></span>
+        <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg> ${esc(it.cat)}</span>
       </div>
       <div class="action-row">
-        <button class="btn" id="likeBtn">❤️ Like</button>
-        <button class="btn ghost" id="printBtn">🖨️ I'd print this</button>
-        ${it.source === "store" ? `<button class="btn ghost" onclick="window.open('https://tommylabs.store','_blank')">🛒 Visit store</button>` : ""}
+        <button class="btn" id="likeBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg> Like</button>
+        <button class="btn ghost" id="printBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> I'd print this</button>
+        ${it.source === "store" ? `<button class="btn ghost" onclick="window.open('https://tommylabs.store','_blank')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Visit store</button>` : ""}
       </div>
       <div class="desc">${esc(it.desc)}</div>
       ${(it.tags||[]).length ? `<div class="tags">${it.tags.map(t => `<span class="tag">#${esc(t)}</span>`).join("")}</div>` : ""}
       <div class="comments">
-        <h3>💬 Community talk (${(it.comments||[]).length})</h3>
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Community talk (${(it.comments||[]).length})</h3>
         <div id="cList">${(it.comments||[]).map(c => `
           <div class="comment">${avatarHtml(c.name,28)}
             <div class="bubble"><span class="who">${esc(c.name)}</span><span class="when">${timeAgo(c.at)}</span>
@@ -951,19 +972,15 @@ function renderLab(){
   const on = engineOnline();
   const banner = $("#engineBanner");
   const dot = $("#labDot"), outDot = $("#outDot");
-  banner.innerHTML = on
-    ? `<span>🟢</span><span><b>Engine online.</b> Paste a picture and it goes straight to the engine → the model renders on the right.</span>`
-    : `<span>🟡</span><span><b>Engine slot ready — no engine installed yet.</b> Paste a picture anyway to try the flow; the moment the engine is configured the result appears in the viewer on the right.</span>`;
-  banner.className = "engine-banner" + (on ? " on" : "");
+  if (banner) {
+    banner.style.display = on ? "flex" : "none";
+    banner.innerHTML = on
+      ? `<span>🟢</span><span><b>3D magic is on.</b> Pick a picture and watch it become a print.</span>`
+      : `<span>🟡</span><span><b>Almost ready.</b> Pick a picture — the crew is setting up the magic.</span>`;
+    banner.className = "engine-banner" + (on ? " on" : "");
+  }
   dot.className = "dot " + (on ? "on" : "off");
   outDot.className = "dot " + (on ? "on" : "soon");
-  $("#slotCode").textContent =
-`// catalog/index.html — top of the script
-window.TOMMY_3D_ENGINE = {
-  endpoint: ${eng.endpoint ? JSON.stringify(eng.endpoint) : "null // ← put your engine URL here"},
-  apiKey:   ${eng.apiKey ? JSON.stringify(eng.apiKey) : "null"},
-  prompt:   ${JSON.stringify(eng.prompt || "")}
-};`;
   if (!on) setStage("empty");
   else if (!state.labImg) setStage("empty");
 }
@@ -971,19 +988,19 @@ function setStage(kind, html){
   const stage = $("#labStage");
   if (kind === "empty") {
     stage.className = "stage empty";
-    stage.innerHTML = `<div><div class="icon">🛠️</div><p>Drop a picture on the left and the generated 3D model will appear here — ready to spin, inspect, and hand to the printer.</p></div>`;
+    stage.innerHTML = `<div><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px;opacity:.6"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div><p>Your 3D model shows up here, ready to spin and print.</p></div>`;
   } else if (kind === "busy") {
     stage.className = "stage";
-    stage.innerHTML = `<div style="text-align:center"><div class="spin" style="margin:0 auto 14px"></div><p style="color:var(--muted);font-size:13px">${esc(html||"Sending your picture to the engine…")}</p></div>`;
+    stage.innerHTML = `<div style="text-align:center"><div class="spin" style="margin:0 auto 14px"></div><p style="color:var(--muted);font-size:13px">${esc(html||"Working on it…")}</p></div>`;
   } else if (kind === "error") {
     stage.className = "stage empty";
-    stage.innerHTML = `<div><div class="icon">😵</div><p style="color:var(--red)">${esc(html||"The engine didn't return a model.")}</p><button class="btn small" style="margin-top:12px" id="retryLab">Try again</button></div>`;
+    stage.innerHTML = `<div><div class="icon" style="color:var(--red)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><p style="color:var(--red)">${esc(html||"That didn't work — try again.")}</p><button class="btn small" style="margin-top:12px" id="retryLab">Try again</button></div>`;
     $("#retryLab")?.addEventListener("click", () => runEngine());
   } else if (kind === "model") {
     stage.className = "stage";
     stage.innerHTML = `<model-viewer src="${esc(html)}" alt="Generated 3D model" camera-controls auto-rotate shadow-intensity="1" exposure="1.1" style="width:100%;height:420px;background:radial-gradient(600px 400px at 50% 30%, #13203a, #0a0f1d)"></model-viewer>
       <div style="margin-top:10px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-        <button class="btn small" id="labDownload" onclick="window.open('${esc(html)}','_blank')">⬇️ Download GLB</button>
+        <button class="btn small" id="labDownload" onclick="window.open('${esc(html)}','_blank')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ic"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>
         <button class="btn small ghost" id="labAgain">Try another</button>
       </div>`;
     $("#labAgain").onclick = () => { state.labImg = null; $("#labPreview").style.display = "none"; renderLab(); };
